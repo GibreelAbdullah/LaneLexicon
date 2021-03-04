@@ -1,0 +1,53 @@
+To convert Greame Andrews' database to the required format
+
+1) Create a new table DICTIONARY with columns BLANK,ID,ROOT,WORD,DEFINITION
+2) Populate the table with the query 
+    INSERT INTO DICTIONARY (ROOT, WORD, DEFINITION)
+    SELECT ROOT, WORD, XML DEFINITION
+    FROM   entry
+    ORDER BY PAGE,ID
+3) Export the DICTIONARY table as CSV and open with any advanced text editor (with regex search support) like VSCODE
+4) Do the following replace actions with REGEX ON
+    a) {\n} with { }
+    b) {[ ]+} with { }
+    c) { #} with {\n} also remove the first BLANK column header
+    d) {"<entr(.|\n)+?/form>} with {null}
+    e) {<foreign lang=""ar"">} with {null}
+    f) {<foreign lang=""ar"" marker=""none"">} with {null}
+    g) {<foreign lang=""he"">} with {null}
+    h) {</foreign>} with {null}
+    i) {hi rend=""ital""} with {i}
+    j) {</hi>} with {</i>}
+    k) { *</entryFree>"} with {null}
+    l) {<orth orig=""Bu"".*?(</form>)} with {ﹹ}
+    m) {<orth orig=""Ba"".*?(</form>)} with {ﹷ}
+    n) {<orth orig=""Bi"".*?(</form>)} with {ﹻ}
+    o) {<sense type=""A"" .*?(</sense>)} with {‗‗‗}
+    p) {<sense type=""b"" .*?(</sense>)} with {___}
+    q) { <pb n=""[0-9]*""/>} with {null}
+    r) {<form n=""infl"">} with {null}
+    s) {<ref cref="".*?("" target="")} with {🠗}
+    t) {"" n=.*?(/>)} with {null}
+    u) {<assumedtropical>\(assumed tropical:\)</assumedtropical>} with {†}
+    v) {<tropical>\(tropical:\)</tropical>} with {‡}
+
+5) Import the csv file as a table DICTIONARY
+6) Add 5 columns RANK, REAL_ID, IS_ROOT, QURAN_OCCURANCE and PARENT_ID (all should be in lower case)
+7) Execute 'update dictionary set rank = 1;'
+8) Execute 'insert into dictionary (ID, WORD, RANK) select min(id), root,0 as rank from dictionary group by root order by id;'
+9) Execute 'UPDATE dictionary set REAL_ID = (select internal.real_internal_id from
+        (select RANK() over (partition by 1 order by ID, rank) real_internal_id, id internal_id, rank internal_rank from dictionary order by id) internal
+        WHERE internal.internal_id = id and internal.internal_rank = rank)'
+10) Execute 'UPDATE dictionary set root = word where root is null'
+11) Execute 'UPDATE dictionary set parent_id = (select real_parent_id from (
+        select min(real_id) real_parent_id, root internal_root from dictionary group by root) where internal_root = root)'
+12) Drop columns ID,ROOT, RANK 
+13) Rename column REAL_ID to ID and make it PK, Not Null and Unique
+14) Execute 'UPDATE dictionary set IS_ROOT = 1 where DEFINITION is null'
+15) Execute 'UPDATE dictionary set IS_ROOT = 0 where IS_ROOT is null'
+16) Execute 'UPDATE dictionary set DEFINITION = WORD || ' ' || definition'
+
+
+    <(?![/i])
+    <[^/i]
+    ‗‗‗
