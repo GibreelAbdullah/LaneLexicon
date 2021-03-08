@@ -1,4 +1,4 @@
-# lane_lexicon
+# Lane's Lexicon
 
 A new Flutter project.
 
