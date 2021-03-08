@@ -12,15 +12,13 @@ const String NOTIFICATION_SCREEN_TITLE = 'Notifications';
 
 const String ABOUT_APP = '''
     <br>
-    <p style="text-align:center">The <i><b>Dictionary of Modern Written Arabic</b></i> is an Arabic-English dictionary compiled by 
-    <a href="https://en.wikipedia.org/wiki/Hans_Wehr" title="Hans Wehr">Hans Wehr</a> and edited by 
-    <a href="https://en.wikipedia.org/wiki/J_Milton_Cowan" title="J Milton Cowan">J Milton Cowan</a>.<br>''';
+    <p style="text-align:center"><i><b>Lanes's Lexicon or Arabic-English Lexicon</b></i> is an Arabic-English dictionary compiled by 
+    <a href="https://en.wikipedia.org/wiki/Edward_William_Lane" title="Edward William Lane">Edward William Lane</a>.<br>''';
 const String WHATS_NEW =
     '''<p style="text-align:center"><b> What's New :</b> </p>
     <p style="text-align:left">
-    - Donate Option <br>
-    - Dictionary Updates including mistake pointed by Jeremy (Thanks) <br>
-    </p> <p style="text-align:center"> <a href = "https://github.com/MuslimTechNet/HansWehrDictionary/blob/master/README.md">Source Code, Full Release Notes and Future Work</a></p><br>''';
+    - First Version <br>
+    </p> <p style="text-align:center"> <a href = "https://github.com/MuslimTechNet/LaneLexicon/blob/master/README.md">Source Code, Full Release Notes and Future Work</a></p><br>''';
 const String COMMUNITY_INVITE =
     '''<p style="text-align:center">If you are a Muslim tech professional or aspiring to be one join the <br>
     <b>Muslim Tech Network</b></p><br>''';
