@@ -1,53 +1,83 @@
-To convert Greame Andrews' database to the required format
+ To convert Greame Andrews' database to the required format
 
-1) Create a new table DICTIONARY with columns BLANK,ID,ROOT,WORD,DEFINITION
+1) Create a new table DICTIONARY with columns BLANK,ID,ROOT,WORD,DEFINITION - ID should be a primary key and auto populated
 2) Populate the table with the query 
     INSERT INTO DICTIONARY (ROOT, WORD, DEFINITION)
-    SELECT ROOT, WORD, XML DEFINITION
+    SELECT ROOT, BAREWORD ,WORD || ' '|| XML DEFINITION
     FROM   entry
     ORDER BY PAGE,ID
 3) Export the DICTIONARY table as CSV and open with any advanced text editor (with regex search support) like VSCODE
 4) Do the following replace actions with REGEX ON
-    a) {\n} with { }
-    b) {[ ]+} with { }
-    c) { #} with {\n} also remove the first BLANK column header
-    d) {"<entr(.|\n)+?/form>} with {null}
-    e) {<foreign lang=""ar"">} with {null}
-    f) {<foreign lang=""ar"" marker=""none"">} with {null}
-    g) {<foreign lang=""he"">} with {null}
-    h) {</foreign>} with {null}
-    i) {hi rend=""ital""} with {i}
-    j) {</hi>} with {</i>}
-    k) { *</entryFree>"} with {null}
-    l) {<orth orig=""Bu"".*?(</form>)} with {ﹹ}
-    m) {<orth orig=""Ba"".*?(</form>)} with {ﹷ}
-    n) {<orth orig=""Bi"".*?(</form>)} with {ﹻ}
-    o) {<sense type=""A"" .*?(</sense>)} with {‗‗‗}
-    p) {<sense type=""b"" .*?(</sense>)} with {___}
-    q) { <pb n=""[0-9]*""/>} with {null}
-    r) {<form n=""infl"">} with {null}
-    s) {<ref cref="".*?("" target="")} with {🠗}
-    t) {"" n=.*?(/>)} with {null}
-    u) {<assumedtropical>\(assumed tropical:\)</assumedtropical>} with {†}
-    v) {<tropical>\(tropical:\)</tropical>} with {‡}
+    a)  {\n} with { }
+    b)  { #} with {\n} also remove the first BLANK column header
+    c)  {<entr(.|\n)+?form>} with {null}
+    d)  {<itype>alphabetical letter</itype>} with {null}
+    e)  {<itype>} with null
+    f)  {</itype>} with null
+    g)  {<foreign lang=""[a-z" =]*>} with {null}
+    h)  {</foreign>} with {null}
+    i)  {hi rend=""ital""} with {i}
+    j)  {</hi>} with {</i>}
+    k)  { *</entryFree>"} with {null}
+    l)  {<orth orig=""Bu"".*?(</form>)} with {ﹹ}
+    m)  {<orth orig=""Ba"".*?(</form>)} with {ﹷ}
+    n)  {<orth orig=""Bi"".*?(</form>)} with {ﹻ}
+    o)  {<sense type=""A"" .*?(</sense>)} with {===}
+    p)  {<sense type=""b"" .*?(</sense>)} with {___}
+    q)  { <pb n=""[0-9]*""/>} with {null}
+    r)  {<form n=""infl"">} with {null}
+    s)  {<ref cref="".*?("" target="")} with {🡻}
+    t)  {"" n=.*?(/>)} with {null}
+    u)  {<assumedtropical>\(assumed tropical:\)</assumedtropical>} with {†}
+    v)  {<tropical>\(tropical:\)</tropical>} with {‡}
+    x)  {<orth lang=""ar.*</orth>} with {null}
+    y)  {<orth lang="".*?>} with {null}
+    z)  {<orth .*?(</orth>)} with {null} <orth lang="gr">εἰς αἰῶνα τῶν αἰώνων</orth> 
+    aa) {</orth>} with {null}
+    ab) {</form>} with {null}
+    ac) {<quote>} with {<center>}
+    ad) {</quote>} with {</center>}
+    ae) {<L>} with {<h3>}
+    af) {</L>} with {</h3>}
+    ag) {[ ]+} with { }
+    ah) {<G/>} with {null}
+    ai) {<anchor/>} with {null}
+    aj) {<G>} with {null}
+    ak) {</G} with {null}
+    al) {<H>.*?</H>} with {null}
+    am) manually correct the occurence of <lb/> to {إِنَّمَاقُلْ 🡻 يُوحَى إِلَىَّ أَنَّمَا إِلٰهُكُمْ إِلٰهً وَاحِدٌ}
+    an) {<note>.*?</note>} with {null}
+    ao) The below two line contains two tables, replace them manually
+        i)  19371#زمن#زمن#"زَمَنٌ an inf. n. of زَمِنَ [q. v.]. (Msb, K.) === And a simple subst. [meaning <i>Continuance for a long time,</i>] from أَزْمَنَ in the first of the senses assigned to it above; and so 🡻زُمْنَةٌ, with damm. (IAar, TA.) === Also, and 🡻زَمَانٌ, (S, Msb, K, &amp;c.,) the former a contraction of the latter, (Msb,) <i>A time, whether little or much;</i> (S, Msb, K;) thus accord. to Er-Rághib; (TA in art. دهر;) as being <i>a space capable of division:</i> (Msb:) and so says El-Munáwee: (TA:) <i>a time considered with respect to its beginning and its end:</i> (Er-Rághib, MF voce أَمَدٌ:) or <i>i. q.</i> عَصْرٌ [as meaning <i>a space,</i> or <i>period, of time</i>]: (M, K:) [often meaning, without any addition to qualify it, <i>a long time;</i> as in an instance of the usage of the latter word above: (see 4:) what follows here applies to each of these words:] زَمَانٌ differs in some respects from آنٌ and from أَمَدٌ: Sh asserts it to be <i>syn. with</i> دَهْرٌ; but AHeyth says that this is a mistake: (TA:) [it is so, however, sometimes, accord. to several authorities, as has been shown in art. دهر; and particularly as meaning <i>fortune,</i> or <i>fate:</i>] IAth says that it is applied to the <i>whole of what is termed</i> الدَّهْرُ [as meaning <i>time</i>], and to <i>a portion thereof:</i> AHeyth says that it is the زمان [i. e. <i>season</i>] of fruit, of ripe dates, and of heat and cold: and that it may be [<i>a period of</i>] <i>two months</i> [as meaning <i>any one of the six seasons of the solar year</i>] to <i>six months</i> [as meaning the <i>half-year often termed summer</i> and the <i>half-year often termed winter</i>]: (TA:) [thus] it is applied to <i>any one of the four quarters of the year;</i> (Msb, TA;) the first of which [in the order in which they are commonly mentioned by the Arabs, i. e. autumn,] is called by the Arabs [of the classical age] الرَّبِيعُ, but vulgarly الخَرِيفُ; called by the former name because the first rain is therein, giving growth to [the herbage called] the رَبِيع; and called by the latter name because the fruits are gathered therein; and it commences when the sun enters Libra: the second [i. e. winter] is called الشِّتَآءُ; and commences when the sun enters Capricornus: the third [i. e. spring] is الصَّيْفُ, vulgarly called الرَّبِيعُ; and commences when the sun enters Aries: the fourth [i. e. summer] is القَيْظُ, vulgarly called الصَّيْفُ; and commences when the sun enters Cancer: (Msb:) * * The two following tables exhibit the principal divisions of the Arabian Calendar. The latter of them shows the places of the months in relation to the solar year at the period when they received the names by which they are here designated. <table> <tbody> <tr> <td></td> <td>THE QUARTERS<br> older : later<br> names names</td> <td></td> <td>THE SIX SEASONS</td> </tr> <tr> <td rowspan="6">Together called by some الشتاء and الربيع</td> <td rowspan="3">الخريف : الربيع<br> Autumn</td> <td>Oct.</td> <td rowspan="2">الخريف</td> </tr> <tr> <td>Nov.</td> </tr> <tr> <td>Dec.</td> <td rowspan="2">الشتاء</td> </tr> <tr> <td rowspan="3">الشتاء<br> Winter</td> <td>Jan.</td> </tr> <tr> <td>Feb.</td> <td rowspan="2">الربيع الأول or<br> الربيع الكلا</td> </tr> <tr> <td>Mar.</td> </tr> <tr> <td rowspan="6">Together called by some الصيف</td> <td rowspan="3">الربيع : الصيف<br> Spring</td> <td>Apr.</td> <td rowspan="2">الصيف</td> </tr> <tr> <td>May.</td> </tr> <tr> <td>June</td> <td rowspan="2">القيظ</td> </tr> <tr> <td rowspan="3">الصيف : القيظ<br> Summer</td> <td>July</td> </tr> <tr> <td>Aug.</td> <td rowspan="2">الربيع الثانى or<br> الربيع الثمار</td> </tr> <tr> <td>Sept.</td> </tr> </tbody> </table> <table> <tbody> <tr> <td></td> <td>THE MONTHS</td> <td></td> <td></td> <td></td> </tr> <tr> <td>11.</td> <td>ذُو ٱلْقَعْدَة‎</td> <td>Oct.</td> <td rowspan="2">الوسمي</td> <td rowspan="6">الربيع</td> </tr> <tr> <td>12.</td> <td>ذُو ٱلْحِجَّة‎</td> <td>Nov.</td> </tr> <tr> <td>1.</td> <td>ٱلْمُحَرَّم</td> <td>Dec.</td> <td rowspan="2">الشتوي</td> </tr> <tr> <td>2.</td> <td>صَفَر</td> <td>Jan.</td> </tr> <tr> <td>3.</td> <td>رَبِيع ٱلْأَوَّل‎</td> <td>Feb.</td> <td rowspan="2">الدفئي</td> </tr> <tr> <td>4.</td> <td>رَبِيع ٱلْآخِر‎</td> <td>Mar.</td> </tr> <tr> <td>5.</td> <td>جُمَادَىٰ ٱلْأُولَىٰ‎</td> <td>Apr.</td> <td rowspan="2">الصيف</td> <td></td> </tr> <tr> <td>6.</td> <td>جُمَادَىٰ ٱلْآخِرَة‎</td> <td>May</td> <td></td> </tr> <tr> <td>7.</td> <td>رَجَب</td> <td>June</td> <td rowspan="2">الحميم</td> <td rowspan="4">Mostly Dry.</td> </tr> <tr> <td>8.</td> <td>شَعْبَان</td> <td>July</td> </tr> <tr> <td>9.</td> <td>رَمَضَان</td> <td>Aug.</td> <td rowspan="2">الخريف</td> </tr> <tr> <td>10.</td> <td>شَوَّال</td> <td>Sept.</td> </tr> </tbody> </table> it is also applied to the <i>time,</i> or <i>period, of the reign, rule, prefecture,</i> or <i>the like,</i> of a man: [and to the <i>life-time</i> of a man:] with the philosophers, it signifies the <i>measure of the motion of the ninth</i> (or <i>greatest</i>) <i>sphere</i> (الفَلَك الأَطْلَس): (TA:) [and there are various other explanations belonging to the conventional language of the schools, not to the proper language of the Arabs: (see the “ Dict. of the Technical Terms used in the Sciences of the Musalmans: ”)] the pl. (of زَمَنٌ, Msb) is أَزْمَانٌ and أَزْمُنٌ and (that of زَمَانٌ, Msb) أَزْمِنَةٌ. (S, Msb, K.) [The dim. of زَمَنٌ, i. e. زُمَيْنٌ, see below.] In the following trad., إِذَا تَقَارَبَ 🡻الزَّمَانُ لَمْ تَكَدْ رُؤيَا المُؤْمِنِ تَكْذِبُ [<i>When the time becomes contracted, the dream of the believer will scarcely ever,</i> or <i>never, be false</i>], what is meant is the end of time; and the approach of the resurrection; because when a thing becomes little, its extremities contract: or what is meant is the day's and the night's becoming equal; for the interpreters of dreams assert that the times [of dreams] most true of interpretation are the season of the breaking forth of the blossoms and that of the ripening of the fruit, which is when the day and the night become equal: or what is meant is the coming forth of El-Mahdee, when the year will be like the month, and the month like the week, and the week like the day, and the day like the hour, deemed short because deemed delightful: (K in art. قرب:) or it alludes to the shortness of lives and the scantiness of blessings. (TA in that art.) In another trad. it is said, كَانَتْ تَأْتِينَا أَزْمَانَ خَدِيجَةَ, meaning [<i>She used to come to us</i>] <i>in the life-time</i> [lit. <i>times</i>] <i>of Khadeejeh.</i> (TA.) And one says also, 🡻زَمَنَةٍمَا لَقِيتُهُ مُذْ, meaning مذ 🡻زَمَانٍ [i. e. <i>I have not met him for a long time</i> past: but in this case, accord. to the more approved usage, one should say مُذْ زَمَنَةٌ and مُذْ زَمَانٌ, or مُنْذُ زَمَنَةٍ and مُنْذُ زَمَانٍ]. (Lh, K, * TA.) (For authorities, and further information, see the words here mentioned, and more particularly نَوْءٌ and رَبِيعٌ; under the latter of which it is said that the third and last of the Six Seasons are called by some, respectively, الرَّبِيعُ الثَّانِى and الرَّبِيعُ الأَوَّلُ; and also that the appellations of the 3rd and 4th months are differently pronounced by different persons; and that some exclude the وَسْمِىّ from the rains called الرَّبِيعُ: and for the Calendar of the Mansions of the Moon, see مَنَازِلُ القَمَرِ, in art. نزل.) The months are said to have received the names here given to them from Kiláb Ibn-Murrah, an ancestor of Mohammad, about two centuries before El-Islám. These months were lunar; and from this period, with the view of adapting their year to the solar, the Arabs added a month, which they called النَّسِىْءُ, at the end of every three years, until they were forbidden to do so by the Kur-án (ch. ix.): but the months still retrograded through the seasons, though much more slowly. The abolition of the intercalation was proclaimed by Mohammad at the pilgrimage in the tenth year of the Flight.
+        ii) 43801#هجر#هجرة#"هِجْرَةٌ , a subst. from هَجَرَهُ, (S, K,) as also 🡻هِجْرَانٌ, (Msb,) signifying The <i>cutting another off from friendly</i> or <i>loving communion</i> or <i>intercourse:</i> (S:) <i>cutting one;</i> or <i>ceasing to speak to him:</i> (K:) <i>forsaking, abandoning, deserting,</i> or <i>shunning</i> or <i>avoiding, one.</i> (Msb.) It is said in a trad., لَا هِجْرَةَ بَعْدَ ثَلَاثٍ [<i>There shall be no cutting off from friendly communion after three</i> nights with their days,]: the meaning is, هَجْرٌ as contr. of وَصْلٌ; i. e., such anger as exists between Muslims, or a failing, or falling short, with respect to the duties of society, exclusively of what relates to religion: but the هِجْرَة of those who follow their own natural desires [in matters of religion], and of innovators [in religion], should continue even as long as they do not repent, and return to the truth. (TA.) === [Also, <i>A mode,</i> or <i>manner, of cutting another off from friendly</i> or <i>loving communion</i> or <i>intercourse:</i> &amp;c. See 1, where an ex. occurs.] === Also, <i>A removal from the desert to the towns</i> or <i>villages:</i> this was its [primary] acceptation with the Arabs: and the <i>forsaking of his country,</i> or <i>district,</i> or <i>the like, by an inhabitant of the desert,</i> or <i>by an inhabitant of a town,</i> or <i>village,</i> or <i>cultivated district, and taking up his abode in another country</i> or <i>district,</i> or <i>the like, an emigration;</i> (TA;) the <i>forsaking of one's home and removing to another place;</i> (Mgh;) the <i>forsaking of a country,</i> or <i>district,</i> or <i>the like, and removing to another;</i> (Msb;) the <i>going forth from one land to another;</i> as also 🡻هُجْرَةٌ. (K:) [and <i>an emigration from the territory of the unbelievers to the territory of the believers,</i> or <i>to any place of safety</i> or <i>refuge on account of religious persecution &amp;c.:</i> see 3, last signification:] a subst. from هَاجَرَ. (Msb, TA.) === [الهِجْرَةٌ, peculiarly, <i>The emigration,</i> or <i>flight,</i> (for it was really a flight,) of Mohammad, from Mekkeh to Yethrib, which latter was afterwards called El-Medeeneh. Hence, تَأْرِيخُ الهِجْرَةِ <i>The era of the Hijreh,</i> or <i>Flight.</i> The epoch of this era is not the date of the Flight itself, as some have imagined, (for this took place on an uncertain day, most probably the first or second, of the third lunar month of the Arabian year,) but is the first day of the Arabian year in which the Flight happened: and as I believe that all European writers who have attempted to fix it, prior to M. Caussin de Perceval, have erred respecting it, the true date, as shown by him, (see his “ Essai sur l'Histoire des Arabes, ” &amp;c., in the places referred to in the index to that work,) I think it important here to mention. The first year of the Flight was the two hundred and eleventh year of a period during which the Arabs made use of a defective luni-solar reckoning, making every third year to consist of thirteen lunar months; the others consisting of twelve such months. This mode of reckoning was abolished by Mohammad in the twelfth month of the tenth year of the Flight, at the time of the pilgrimage; whence it appears that the first year of the Flight commenced, most probably, on Monday, the nineteenth of April, A. D. 622; or perhaps on the eighteenth; for the actual appearance of the new moon properly marked its commencement, and, as the new moon happened about sunset on the sixteenth, it may perhaps have been seen on the eve of the eighteenth. According to M. Caussin de Perceval, the first ten years of the Flight commenced at the following periods. <table> <tbody> <tr> <td>1st.</td> <td>[Mon.]</td> <td>Apr. 19, 622</td> </tr> <tr> <td>2nd.</td> <td>[Sat.]</td> <td>May 7, 623</td> </tr> <tr> <td>3rd.</td> <td>[Th.]</td> <td>Apr. 26, 624</td> </tr> <tr> <td>4th.</td> <td>[Mon.]</td> <td>Apr. 15, 625</td> </tr> <tr> <td>5th.</td> <td>[Sat.]</td> <td>May 3, 626</td> </tr> <tr> <td>6th.</td> <td>[Th.]</td> <td>Apr. 23, 627</td> </tr> <tr> <td>7th.</td> <td>[Tu.]</td> <td>Apr. 12, 628</td> </tr> <tr> <td>8th.</td> <td>[Mon.]</td> <td>May 1 629</td> </tr> <tr> <td>9th.</td> <td>[Fri.]</td> <td>Apr. 20, 630</td> </tr> <tr> <td>10th.</td> <td>[Tu.]</td> <td>Apr. 9, 631</td> </tr> </tbody> </table> Thus it appears that the first and fourth and seventh years were of thirteen lunar months each; and the seventh was the last year that was thus augmented: therefore, with the eighth year commenced the reckoning by common lunar years; and from this point we may use the tables which have often been published for finding the periods of commencement of years of the Flight. We must not, however, rely upon the exact accuracy of these tables: for the commencement of the month was generally determined by actual observation of the new moon; not by calculation; and we often find that a year was commenced, according as the place of observation was low or high, or to the east or west of the place to which the calculation is adapted, or according as the sky was obscure or clear, a day later or earlier than that which is indicated in the tables; and in some cases, even two days later. The twelfth day of the third month of the first year of the Flight, the day of Mohammad's arrival at Kubà, was Monday: therefore the first day of the year was most probably the nineteenth of April, as two months of thirty days each, or twenty-nine days each, seldom occur together. But the tenth day of the first month of the sixty-first year, the day on which El-Hoseyn was slain at Kerbelà, was Friday: therefore the first day of that year, at that place, must have been Wednesday, the third of October, A. D. 680; not the first of October, as in most of the published tables above mentioned. (For the principal divisions of the Arabian year when the luni-solar reckoning was instituted, see زَمَنٌ)]. الهِجْرَتَانِ means [<i>The two emigrations,</i> or <i>flights;</i> namely,] <i>the</i> هِجْرَة <i>to Abyssinia and the</i> هِجْرَة <i>to El-Medeeneh.</i> (S, K.) And ذُو الهِجْرَتَيْنِ <i>He</i> (of the صَحَابَة [or Companions of Mohammad] TA) <i>who emigrated,</i> or <i>who has emigrated, to Abyssinia and to El-Medeeneh.</i> (K.)
+
+    ap) {<H/>} with {null}
+    aq) {#"} with {#}
+    ar) {&amp;} with {&}
 
 5) Import the csv file as a table DICTIONARY
 6) Add 5 columns RANK, REAL_ID, IS_ROOT, QURAN_OCCURANCE and PARENT_ID (all should be in lower case)
-7) Execute 'update dictionary set rank = 1;'
-8) Execute 'insert into dictionary (ID, WORD, RANK) select min(id), root,0 as rank from dictionary group by root order by id;'
-9) Execute 'UPDATE dictionary set REAL_ID = (select internal.real_internal_id from
-        (select RANK() over (partition by 1 order by ID, rank) real_internal_id, id internal_id, rank internal_rank from dictionary order by id) internal
-        WHERE internal.internal_id = id and internal.internal_rank = rank)'
-10) Execute 'UPDATE dictionary set root = word where root is null'
-11) Execute 'UPDATE dictionary set parent_id = (select real_parent_id from (
-        select min(real_id) real_parent_id, root internal_root from dictionary group by root) where internal_root = root)'
-12) Drop columns ID,ROOT, RANK 
-13) Rename column REAL_ID to ID and make it PK, Not Null and Unique
-14) Execute 'UPDATE dictionary set IS_ROOT = 1 where DEFINITION is null'
-15) Execute 'UPDATE dictionary set IS_ROOT = 0 where IS_ROOT is null'
-16) Execute 'UPDATE dictionary set DEFINITION = WORD || ' ' || definition'
+
+7) Execute the below script - update dictionary set rank = 1;
+                            insert into dictionary (ID, WORD, RANK) select min(id), root,0 as rank from dictionary group by root order by id;
+                            UPDATE dictionary set REAL_ID = (select internal.real_internal_id from
+                                    (select RANK() over (partition by 1 order by ID, rank) real_internal_id, id internal_id, rank internal_rank from dictionary order by id) internal
+                                    WHERE internal.internal_id = id and internal.internal_rank = rank);
+                            UPDATE dictionary set root = word where root is null;
+                            UPDATE dictionary set parent_id = (select real_parent_id from (
+                                    select min(real_id) real_parent_id, root internal_root from dictionary group by root) where internal_root = root);
+                            UPDATE dictionary set IS_ROOT = 1 where DEFINITION is null;
+                            UPDATE dictionary set IS_ROOT = 0 where IS_ROOT is null;
+                            update dictionary set definition = word where definition is null;
+                            UPDATE DICTIONARY SET WORD = REPLACE(WORD,'أ','ا');
+                            UPDATE DICTIONARY SET WORD = REPLACE(WORD,'إ','ا');
+8) Drop columns ID,ROOT, RANK 
+9) Rename column REAL_ID to ID and make it PK, Not Null and Unique
 
 
+<(?!([/i])|(h3)|(center)|(table)|(tbody)|(tr)|(td)|(br))
+<(?!([/i])|(h3)|(center))
     <(?![/i])
     <[^/i]
     ‗‗‗
+    <orth lang=""(?!(a))

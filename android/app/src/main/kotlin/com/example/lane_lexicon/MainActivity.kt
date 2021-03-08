@@ -1,4 +1,4 @@
-package com.example.lane_lexicon
+package com.muslimtechnet.lane_lexicon
 
 import io.flutter.embedding.android.FlutterActivity
 
