@@ -35,11 +35,11 @@ final Future<Database> databaseConnection =
     DatabaseAccess().openDatabaseConnection();
 
 const String PLAY_STORE_LINK =
-    'https://play.google.com/store/apps/details?id=com.muslimtechnet.hanswehr';
+    'https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon';
 
 const String PAYPAL_LINK = 'https://www.paypal.me/gibreelabdullah';
 const String UPI_LINK =
-    'upi://pay?pa=gibreelkhan@okaxis&pn=Gibreel+Abdullah&tn=Donation+:+Hans+Wehr+Dictionary';
+    'upi://pay?pa=gibreelkhan@okaxis&pn=Gibreel+Abdullah&tn=Donation+:+Lane+Lexicon+Dictionary';
 
 const List<String> VERB_FORMS = [
   'I - فَعَل/فَعُل/فَعِل',

@@ -14,7 +14,7 @@ class DatabaseAccess {
     var exists = await databaseExists(path);
 
     if (!exists) {
-      print("HansWehr DB V5 doesn't exist");
+      print("LaneLexiconDB V5 doesn't exist");
       try {
         await Directory(dirname(path)).create(recursive: true);
       } catch (_) {}
@@ -22,10 +22,10 @@ class DatabaseAccess {
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes, flush: true);
-      var oldPath = join(await getDatabasesPath(), "hanswehrV5.db");
+      var oldPath = join(await getDatabasesPath(), "lanelexiconV5.db");
       exists = await databaseExists(oldPath);
       if (exists) {
-        print("HansWehr DB V5 exist");
+        print("LaneLexiconDB V5 exist");
         databaseFactory.deleteDatabase(oldPath);
       }
     }

@@ -50,18 +50,18 @@ class CommonDrawer extends StatelessWidget {
                       title: SETTINGS_SCREEN_TITLE,
                       route: '/settings',
                       icon: Icons.settings),
-                  DrawerItem(
-                      currentScreen: currentScreen,
-                      title: ABOUT_APP_SCREEN_TITLE,
-                      route: '/aboutus',
-                      icon: Icons.people),
+                  // DrawerItem(
+                  //     currentScreen: currentScreen,
+                  //     title: ABOUT_APP_SCREEN_TITLE,
+                  //     route: '/aboutus',
+                  //     icon: Icons.people),
                   // DrawerItem(
                   //   currentScreen: currentScreen,
                   //   title: NOTIFICATION_SCREEN_TITLE,
                   //   route: '/notifications',
                   //   icon: Icons.notifications,
                   // ),
-                  RateUs(),
+                  // RateUs(),
                 ],
               ),
             ],
@@ -256,8 +256,8 @@ class RateUs extends StatelessWidget {
         FlatButton(
           child: Icon(Icons.share),
           onPressed: () {
-            Share.share(
-                'Check out this Hans Wehr Dictionary App : ' + PLAY_STORE_LINK);
+            Share.share('Check out this Lane LexiconDictionary App : ' +
+                PLAY_STORE_LINK);
           },
         ),
       ],
