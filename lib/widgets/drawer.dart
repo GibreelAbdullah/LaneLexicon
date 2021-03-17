@@ -44,7 +44,7 @@ class CommonDrawer extends StatelessWidget {
               Column(
                 children: [
                   Divider(),
-                  Donate(),
+                  // Donate(),
                   DrawerItem(
                       currentScreen: currentScreen,
                       title: SETTINGS_SCREEN_TITLE,

@@ -81,7 +81,6 @@ const List<String> VERB_FORM_EXAMPLES = [
 ];
 
 const List<String> ALL_ALPHABETS = [
-  "آ",
   "ا",
   "ب",
   "ت",
