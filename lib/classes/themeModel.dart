@@ -48,7 +48,7 @@ class ThemeModel extends ChangeNotifier {
                       Colors.grey[850],
               brightness: Brightness.dark,
             ),
-            cardColor:
+            dialogBackgroundColor:
                 hexToColor(locator<LocalStorageService>().searchBarColor),
           )
         : lightTheme.copyWith(
@@ -89,7 +89,7 @@ class ThemeModel extends ChangeNotifier {
               brightness: Brightness.light,
             ),
             brightness: Brightness.light,
-            cardColor:
+            dialogBackgroundColor:
                 hexToColor(locator<LocalStorageService>().searchBarColor),
           );
     return notifyListeners();

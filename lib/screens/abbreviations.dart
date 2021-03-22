@@ -18,7 +18,7 @@ class Abbreviations extends StatelessWidget {
       drawer: CommonDrawer(currentScreen: ABBREVIATIONS_SCREEN_TITLE),
       body: ListView.builder(
         padding: EdgeInsets.fromLTRB(8, 8, 8, 100),
-        itemCount: 196,
+        itemCount: 4,
         itemBuilder: (context, index) {
           if (FULL_FORM[index] == "") {
             return Container(
