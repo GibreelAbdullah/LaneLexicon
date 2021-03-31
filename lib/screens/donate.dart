@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,33 +28,28 @@ class Donate extends StatelessWidget {
           children: [
             Padding(padding: EdgeInsets.all(10)),
             Text(
-              '''Thanks for considering to donate.
-There are millions who are facing a devastating decade of crisis and previously unimaginable hardship.
-Kindly donate to them.''',
+              'Thanks for considering to donate.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            CarouselSlider(
-              options: CarouselOptions(),
-              items: imgList
-                  .map(
-                    (item) => Container(
-                      child: Center(
-                          child: Image.asset(item,
-                              fit: BoxFit.cover, width: 1000)),
-                    ),
-                  )
-                  .toList(),
+            Text(
+              '''There are millions who are facing a devastating decade of crisis and previously unimaginable hardship.
+Kindly donate to them.''',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText1,
             ),
             ElevatedButton(
               onPressed: () {
                 launch('https://donations.islamic-relief.com/');
               },
               child: Text(
-                'Donate',
+                'Donate through IslamicRelief',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               style: ElevatedButton.styleFrom(),
+            ),
+            Center(
+              child: Text('Or any other charity of your choice.'),
             ),
             Padding(
               padding: EdgeInsets.all(20),

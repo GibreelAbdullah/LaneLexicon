@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,9 @@ import '../constants/appConstants.dart';
 import '../serviceLocator.dart';
 import '../services/LocalStorageService.dart';
 import 'package:badges/badges.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:html2md/html2md.dart' as html2md;
+import 'package:html/parser.dart';
 
 class DefinitionSpace extends StatefulWidget {
   DefinitionSpace({
@@ -36,9 +40,9 @@ class _DefinitionSpaceState extends State<DefinitionSpace> {
             if (index == 0) {
               if (definitionList.searchType == 'RootSearch') {
                 return ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(300)),
-                  ),
+                  // shape: RoundedRectangleBorder(
+                  //   borderRadius: BorderRadius.all(Radius.circular(300)),
+                  // ),
                   leading: Icon(Icons.info),
                   title: Text(
                     definitionList.searchWord,
@@ -90,9 +94,9 @@ class _DefinitionSpaceState extends State<DefinitionSpace> {
             }
             return Container(
               child: ListTileTheme(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(300)),
-                ),
+                // shape: RoundedRectangleBorder(
+                //   borderRadius: BorderRadius.all(Radius.circular(300)),
+                // ),
                 selectedColor: hexToColor(
                     locator<LocalStorageService>().highlightTextColor),
                 child: DefinitionTile(
@@ -124,6 +128,12 @@ class DefinitionTile extends StatelessWidget {
             hexToColor(locator<LocalStorageService>().highlightTileColor),
         contentPadding: EdgeInsets.fromLTRB(
             definitionList.isRoot[index - 1] == 1 ? 16.0 : 50, 0, 16, 0),
+        // title: MarkdownBody(
+        //   selectable: true,
+        //   data: html2md.convert(
+        //     definitionList.definition[index - 1],
+        //   ),
+        // ),
         title: HtmlWidget(
           definitionList.definition[index - 1],
           textStyle: TextStyle(
@@ -131,6 +141,20 @@ class DefinitionTile extends StatelessWidget {
             fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
           ),
         ),
+        // onLongPress: () {
+        //   Clipboard.setData(
+        //     new ClipboardData(
+        //       text: parse(parse(definitionList.definition[index - 1]).body.text)
+        //           .documentElement
+        //           .text,
+        //     ),
+        //   );
+        //   Scaffold.of(context).showSnackBar(
+        //     SnackBar(
+        //       content: Text("Copied"),
+        //     ),
+        //   );
+        // },
         onTap: () {},
       );
     } else {
@@ -140,13 +164,19 @@ class DefinitionTile extends StatelessWidget {
         selectedTileColor:
             hexToColor(locator<LocalStorageService>().highlightTileColor),
         contentPadding: EdgeInsets.fromLTRB(16.0, 0, 24, 0),
-        title: HtmlWidget(
-          definitionList.definition[index - 1],
-          textStyle: TextStyle(
-            fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
-            fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
+        title: MarkdownBody(
+          selectable: true,
+          data: html2md.convert(
+            definitionList.definition[index - 1],
           ),
         ),
+        // title: HtmlWidget(
+        //   definitionList.definition[index - 1],
+        //   textStyle: TextStyle(
+        //     fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
+        //     fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
+        //   ),
+        // ),
         subtitle: Center(
           child: Badge(
             toAnimate: false,
