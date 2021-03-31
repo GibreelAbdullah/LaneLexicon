@@ -64,6 +64,7 @@ class _AboutAppState extends State<AboutApp> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         InkWell(
+                          onTap: () => _launchURL(DISCORD_INVITE_LINK),
                           child: Image.asset("assets/discord.png",
                               width: min(
                                   MediaQuery.of(context).size.width * 0.35,
@@ -72,7 +73,6 @@ class _AboutAppState extends State<AboutApp> {
                                   MediaQuery.of(context).size.width * 0.105,
                                   70),
                               fit: BoxFit.cover),
-                          onTap: () => _launchURL(DISCORD_INVITE_LINK),
                         ),
                         InkWell(
                           child: Image.asset("assets/reddit.png",

@@ -52,6 +52,11 @@ class CommonDrawer extends StatelessWidget {
                   Divider(),
                   DrawerItem(
                       currentScreen: currentScreen,
+                      title: MORE_APPS,
+                      route: '/moreapps',
+                      icon: Icons.more_horiz),
+                  DrawerItem(
+                      currentScreen: currentScreen,
                       title: DONATE_SCREEN_TITLE,
                       route: '/donate',
                       icon: Icons.payment),
@@ -65,12 +70,6 @@ class CommonDrawer extends StatelessWidget {
                       title: ABOUT_APP_SCREEN_TITLE,
                       route: '/aboutus',
                       icon: Icons.people),
-                  // DrawerItem(
-                  //   currentScreen: currentScreen,
-                  //   title: NOTIFICATION_SCREEN_TITLE,
-                  //   route: '/notifications',
-                  //   icon: Icons.notifications,
-                  // ),
                   RateUs(),
                 ],
               ),
@@ -81,72 +80,6 @@ class CommonDrawer extends StatelessWidget {
     );
   }
 }
-
-// class Donate extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return FlatButton(
-//       onPressed: () {
-//         Navigator.pop(context);
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) {
-//             return AlertDialog(
-//               title: Center(
-//                   child: Text(
-//                 'DONATE',
-//                 style: Theme.of(context).textTheme.bodyText1,
-//               )),
-//               titlePadding: const EdgeInsets.all(8.0),
-//               contentPadding: const EdgeInsets.all(0.0),
-//               content: Container(
-//                 height: MediaQuery.of(context).size.height * .7,
-//                 width: MediaQuery.of(context).size.width * .9,
-//                 child: Scaffold(
-//                   body: Column(
-//                     children: [
-//                       PaymentMethod(
-//                         assetImage: AssetImage('assets/paypal.png'),
-//                         paymentLink: PAYPAL_LINK,
-//                         errorMessage: "Unable to launch PayPal",
-//                       ),
-//                       PaymentMethod(
-//                         assetImage: AssetImage('assets/upi.png'),
-//                         paymentLink: UPI_LINK,
-//                         errorMessage: "No UPI apps found!",
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               actions: [
-//                 FlatButton(
-//                   child: Text(
-//                     'DISMISS',
-//                     style: Theme.of(context).textTheme.bodyText2,
-//                   ),
-//                   onPressed: Navigator.of(context).pop,
-//                 ),
-//               ],
-//             );
-//           },
-//         );
-//       },
-//       child: Row(
-//         children: [
-//           Icon(Icons.payment),
-//           SizedBox(
-//             width: 10,
-//           ),
-//           Text(
-//             'Donate',
-//             style: Theme.of(context).textTheme.bodyText1,
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class PaymentMethod extends StatelessWidget {
   const PaymentMethod({
@@ -259,7 +192,7 @@ class RateUs extends StatelessWidget {
               ],
             ),
             onPressed: () {
-              launch(PLAY_STORE_LINK);
+              launch(LANE_LEXICON_ANDROID_LINK);
             },
           ),
         ),
@@ -267,7 +200,7 @@ class RateUs extends StatelessWidget {
           child: Icon(Icons.share),
           onPressed: () {
             Share.share('Check out this Lane LexiconDictionary App : ' +
-                PLAY_STORE_LINK);
+                LANE_LEXICON_ANDROID_LINK);
           },
         ),
       ],

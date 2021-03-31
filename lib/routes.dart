@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:lane_lexicon/screens/moreApps.dart';
 // import './screens/notifications.dart';
 import 'constants/appConstants.dart';
 import 'screens/abbreviations.dart';
@@ -22,6 +23,7 @@ Map<String, WidgetBuilder> routes = {
         abbreviations: AUTHORITIES_SHORT_FORMS,
         fullForms: AUTHORITIES_FULL_FORMS,
       ),
+  '/moreapps': (context) => MoreApps(),
   '/donate': (context) => Donate(),
   '/settings': (context) => Settings(),
 };

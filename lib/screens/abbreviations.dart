@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/drawer.dart';
-import '../constants/appConstants.dart';
 
 class Abbreviations extends StatelessWidget {
   final String title;

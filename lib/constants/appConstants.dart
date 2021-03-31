@@ -13,6 +13,8 @@ const String SEARCH_SCREEN_TITLE = 'Search';
 const String BROWSE_SCREEN_TITLE = 'Browse';
 const String NOTIFICATION_SCREEN_TITLE = 'Notifications';
 const String DONATE_SCREEN_TITLE = 'Donate';
+const String MORE_APPS = 'More Apps';
+const String ALL_MY_APPS = 'All Apps By Me';
 
 const String ABOUT_APP = '''
     <br>
@@ -40,12 +42,11 @@ final DatabaseAccess databaseObject = new DatabaseAccess();
 final Future<Database> databaseConnection =
     DatabaseAccess().openDatabaseConnection();
 
-const String PLAY_STORE_LINK =
+const String LANE_LEXICON_ANDROID_LINK =
     'https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon';
 
-const String PAYPAL_LINK = 'https://www.paypal.me/gibreelabdullah';
-const String UPI_LINK =
-    'upi://pay?pa=gibreelkhan@okaxis&pn=Gibreel+Abdullah&tn=Donation+:+Lane+Lexicon+Dictionary';
+const String HANS_WEHR_ANDROID_LINK =
+    'https://play.google.com/store/apps/details?id=com.muslimtechnet.hanswehr';
 
 const List<String> VERB_FORMS = [
   'I - فَعَل/فَعُل/فَعِل',
