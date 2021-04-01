@@ -5,11 +5,6 @@ import '../constants/appConstants.dart';
 import '../widgets/drawer.dart';
 
 class Donate extends StatelessWidget {
-  final List<String> imgList = [
-    'assets/donate1.png',
-    'assets/donate2.jpg',
-    'assets/donate3.jpg',
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
