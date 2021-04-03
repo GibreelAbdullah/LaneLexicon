@@ -10,8 +10,6 @@ import '../constants/appConstants.dart';
 import '../serviceLocator.dart';
 import '../services/LocalStorageService.dart';
 import 'package:badges/badges.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:html2md/html2md.dart' as html2md;
 import 'package:html/parser.dart';
 
 class DefinitionSpace extends StatefulWidget {
@@ -40,9 +38,6 @@ class _DefinitionSpaceState extends State<DefinitionSpace> {
             if (index == 0) {
               if (definitionList.searchType == 'RootSearch') {
                 return ListTile(
-                  // shape: RoundedRectangleBorder(
-                  //   borderRadius: BorderRadius.all(Radius.circular(300)),
-                  // ),
                   leading: Icon(Icons.info),
                   title: Text(
                     definitionList.searchWord,
@@ -94,9 +89,6 @@ class _DefinitionSpaceState extends State<DefinitionSpace> {
             }
             return Container(
               child: ListTileTheme(
-                // shape: RoundedRectangleBorder(
-                //   borderRadius: BorderRadius.all(Radius.circular(300)),
-                // ),
                 selectedColor: hexToColor(
                     locator<LocalStorageService>().highlightTextColor),
                 child: DefinitionTile(
@@ -128,12 +120,6 @@ class DefinitionTile extends StatelessWidget {
             hexToColor(locator<LocalStorageService>().highlightTileColor),
         contentPadding: EdgeInsets.fromLTRB(
             definitionList.isRoot[index - 1] == 1 ? 16.0 : 50, 0, 16, 0),
-        // title: MarkdownBody(
-        //   selectable: true,
-        //   data: html2md.convert(
-        //     definitionList.definition[index - 1],
-        //   ),
-        // ),
         title: HtmlWidget(
           definitionList.definition[index - 1],
           textStyle: TextStyle(
@@ -141,20 +127,9 @@ class DefinitionTile extends StatelessWidget {
             fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
           ),
         ),
-        // onLongPress: () {
-        //   Clipboard.setData(
-        //     new ClipboardData(
-        //       text: parse(parse(definitionList.definition[index - 1]).body.text)
-        //           .documentElement
-        //           .text,
-        //     ),
-        //   );
-        //   Scaffold.of(context).showSnackBar(
-        //     SnackBar(
-        //       content: Text("Copied"),
-        //     ),
-        //   );
-        // },
+        onLongPress: () {
+          copyAlert(context);
+        },
         onTap: () {},
       );
     } else {
@@ -164,19 +139,13 @@ class DefinitionTile extends StatelessWidget {
         selectedTileColor:
             hexToColor(locator<LocalStorageService>().highlightTileColor),
         contentPadding: EdgeInsets.fromLTRB(16.0, 0, 24, 0),
-        title: MarkdownBody(
-          selectable: true,
-          data: html2md.convert(
-            definitionList.definition[index - 1],
+        title: HtmlWidget(
+          definitionList.definition[index - 1],
+          textStyle: TextStyle(
+            fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
+            fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
           ),
         ),
-        // title: HtmlWidget(
-        //   definitionList.definition[index - 1],
-        //   textStyle: TextStyle(
-        //     fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
-        //     fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
-        //   ),
-        // ),
         subtitle: Center(
           child: Badge(
             toAnimate: false,
@@ -263,7 +232,109 @@ class DefinitionTile extends StatelessWidget {
             },
           );
         },
+        onLongPress: () {
+          copyAlert(context);
+        },
       );
     }
+  }
+
+  copyAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              'Options',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+          titlePadding: const EdgeInsets.all(8.0),
+          contentPadding: const EdgeInsets.all(0.0),
+          content: Container(
+            height: MediaQuery.of(context).size.height * .4,
+            width: MediaQuery.of(context).size.width * .9,
+            child: Scaffold(
+              body: Builder(
+                builder: (context) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text('Copy Selected Definition'),
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(
+                            text: parse(
+                                    parse(definitionList.definition[index - 1])
+                                        .body
+                                        .text)
+                                .documentElement
+                                .text,
+                          ));
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Copied"),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Copy Root and Derivatives'),
+                        onTap: () {
+                          String text = '';
+                          for (var i = index - 1; i >= 0; i--) {
+                            text = definitionList.definition[i] +
+                                '\n-*-*-*-*-*-*-*-*-*-\n' +
+                                text;
+                            if (definitionList.isRoot[i] == 1) break;
+                          }
+                          print(text);
+                          for (var i = index;
+                              i < definitionList.definition.length;
+                              i++) {
+                            if (definitionList.isRoot[i] == 1) break;
+                            text = text +
+                                definitionList.definition[i] +
+                                '\n-*-*-*-*-*-*-*-*-*-\n';
+                          }
+                          print(text);
+
+                          Clipboard.setData(ClipboardData(
+                            text: parse(parse(text).body.text)
+                                .documentElement
+                                .text,
+                          ));
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Copied"),
+                            ),
+                          );
+
+                          // Clipboard.setData(ClipboardData(text: '123'));
+                          // Scaffold.of(context).showSnackBar(
+                          //   SnackBar(
+                          //     content: Text("Copied"),
+                          //   ),
+                          // );
+                        },
+                      )
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+          actions: [
+            FlatButton(
+              child: Text(
+                'DISMISS',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              onPressed: Navigator.of(context).pop,
+            ),
+          ],
+        );
+      },
+    );
   }
 }

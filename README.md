@@ -1,16 +1,37 @@
-# Lane's Lexicon
+# HansWehrDictionary
 
-A new Flutter project.
+Dictionary of Modern Written Arabic by Hans Wehr
 
-## Getting Started
+Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.hanswehr
 
-This project is a starting point for a Flutter application.
+## Future Work
+- Justify Text Option
 
-A few resources to get you started if this is your first Flutter project:
+## Release Notes
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+#### V - 1.1.1+9 (03 April, 2021) 
+- Bug Fix (changed n to /n)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#### V - 1.1.0+8 (02 April, 2021) 
+- Copy Option (Long press to copy) (Thanks Abu Lubaabah Saheed)
+
+#### V - 1.0.0 (X March, 2020)
+- First Version.
+
+## Disclaimer
+The original source was a PDF file, which was converted to an XML and parsed which isn't a foolproof method. A lot of manual correction was needed and might still have a few errors. Do let me know if you find any - gibreel.khan@gmail.com
+
+## Documentation
+
+### Data Model
+FIELD | Comment
+--- | ---
+ID | The primary key
+WORD | Arabic word
+DEFINITION |  The definition of the corresponding WORD
+IS_ROOT | Whether the WORD is an Arabic root word
+PARENT_ID | If it is NOT a root word, references the ID of the root word else references to itself
+
+## Courtesy
+- https://github.com/laneslexicon/lexicon for the database.
+
