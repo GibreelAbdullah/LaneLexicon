@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../widgets/drawer.dart';
 import '../constants/appConstants.dart';
 
-
 class AboutApp extends StatefulWidget {
   @override
   _AboutAppState createState() => _AboutAppState();
@@ -39,7 +38,7 @@ class _AboutAppState extends State<AboutApp> {
                 ),
                 HtmlWidget(
                   ABOUT_APP,
-                  textStyle: Theme.of(context).textTheme.bodyText1,
+                  textStyle: Theme.of(context).textTheme.bodyText1!,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -47,7 +46,7 @@ class _AboutAppState extends State<AboutApp> {
                 ),
                 HtmlWidget(
                   WHATS_NEW,
-                  textStyle: Theme.of(context).textTheme.bodyText1,
+                  textStyle: Theme.of(context).textTheme.bodyText1!,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -58,13 +57,12 @@ class _AboutAppState extends State<AboutApp> {
                   children: [
                     HtmlWidget(
                       COMMUNITY_INVITE,
-                      textStyle: Theme.of(context).textTheme.bodyText1,
+                      textStyle: Theme.of(context).textTheme.bodyText1!,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         InkWell(
-                          onTap: () => _launchURL(DISCORD_INVITE_LINK),
                           child: Image.asset("assets/discord.png",
                               width: min(
                                   MediaQuery.of(context).size.width * 0.35,
@@ -73,6 +71,7 @@ class _AboutAppState extends State<AboutApp> {
                                   MediaQuery.of(context).size.width * 0.105,
                                   70),
                               fit: BoxFit.cover),
+                          onTap: () => _launchURL(DISCORD_INVITE_LINK),
                         ),
                         InkWell(
                           child: Image.asset("assets/reddit.png",
@@ -95,7 +94,7 @@ class _AboutAppState extends State<AboutApp> {
                 ),
                 HtmlWidget(
                   DISCLAIMER,
-                  textStyle: Theme.of(context).textTheme.bodyText1,
+                  textStyle: Theme.of(context).textTheme.bodyText1!,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),

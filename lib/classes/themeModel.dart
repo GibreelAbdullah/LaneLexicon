@@ -49,7 +49,7 @@ class ThemeModel extends ChangeNotifier {
               brightness: Brightness.dark,
             ),
             dialogBackgroundColor:
-                hexToColor(locator<LocalStorageService>().searchBarColor),
+                hexToColor(locator<LocalStorageService>().backgroundColor),
           )
         : lightTheme.copyWith(
             textTheme: ThemeData.light().textTheme.copyWith(
@@ -90,7 +90,7 @@ class ThemeModel extends ChangeNotifier {
             ),
             brightness: Brightness.light,
             dialogBackgroundColor:
-                hexToColor(locator<LocalStorageService>().searchBarColor),
+                hexToColor(locator<LocalStorageService>().backgroundColor),
           );
     return notifyListeners();
   }

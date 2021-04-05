@@ -6,10 +6,10 @@ class Abbreviations extends StatelessWidget {
   final List<String> abbreviations;
   final List<String> fullForms;
   const Abbreviations({
-    Key key,
-    this.title,
-    this.abbreviations,
-    this.fullForms,
+    Key? key,
+    required this.title,
+    required this.abbreviations,
+    required this.fullForms,
   }) : super(key: key);
 
   @override
@@ -36,7 +36,7 @@ class Abbreviations extends StatelessWidget {
                 abbreviations[index],
                 textScaleFactor: 2,
                 textAlign: TextAlign.left,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
                       color: Colors.grey,
                     ),
               ),
