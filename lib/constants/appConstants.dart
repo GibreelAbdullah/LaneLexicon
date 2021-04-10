@@ -21,10 +21,11 @@ const String ABOUT_APP = '''
     <p style="text-align:center"><i><b>Lanes's Lexicon or Arabic-English Lexicon</b></i> is an Arabic-English dictionary compiled by 
     <a href="https://en.wikipedia.org/wiki/Edward_William_Lane" title="Edward William Lane">Edward William Lane</a>.<br>''';
 const String WHATS_NEW =
-    '''<p style="text-align:center"><b> What's New :</b> </p>
+    '''<p style="text-align:center"><b> WHAT'S NEW :</b> </p>
     <p style="text-align:left">
-    - Copy Option (Long press to copy) (Thanks Abu Lubaabah Saheed) <br>
-    </p> <p style="text-align:center"> <a href = "https://github.com/MuslimTechNet/LaneLexicon/blob/master/README.md">Source Code, Full Release Notes and Future Work</a></p><br>''';
+    - Multiple errors fixed in the text (Thanks Abu Lubaabah Saheed)<br>
+    - Occurrence of the words in the Qur'an<br>
+    </p> <p style="text-align:center"> <a href = "https://github.com/MuslimTechNet/LaneLexicon/blob/master/README.md">Source Code, Full Release Notes</a></p><br>''';
 const String COMMUNITY_INVITE =
     '''<p style="text-align:center">If you are a Muslim tech professional or aspiring to be one join the <br>
     <b>Muslim Tech Network</b></p><br>''';
@@ -33,11 +34,20 @@ const String REDDIT_INVITE_LINK = 'https://www.reddit.com/r/muslimtechnet/';
 const String DONATE_LINK = 'https://www.islamic-relief.org/';
 
 const String DISCLAIMER =
-    '''<p style="text-align:center"><b>DISCLAIMER</b></br>The original source was a PDF file,
-    which was converted to an XML and parsed which isn't a foolproof method.
-    A lot of manual correction was needed and might still have a few errors. 
-    Do let me know if you find any - <a href = "mailto: gibreel.khan@gmail.com">gibreel.khan@gmail.com</a><br>
-    (Mail me if you have a job offer.)</p><br>''';
+    '''<p style="text-align:center"><b>DISCLAIMER - Not 100% Accurate.</b></br>
+    Text was extracted from scanned pages and may have errors.</br></p><br>''';
+
+const String CONTACT_ME = '''<p style="text-align:center"><b>CONTACT ME</b></br>
+    If you have an idea for an app or have a job offer <br><a href = "mailto: gibreel.khan@gmail.com">gibreel.khan@gmail.com</a><br></p><br>''';
+
+const String COURTSEY = '''<p style="text-align:center"><b>COURTSEY</b>
+    <ul>
+      <li><a href="http://www.perseus.tufts.edu/hopper/">Perseus Digital Library</a> for the digitisation of Lane's Lexicon.
+      <li><a href="https://github.com/laneslexicon/LexiconDatabase">Graeme Andrews</a> for providing Perseus' work in database form</li>
+      <li><a href="https://corpus.quran.com/">Quran.com</a> for their word-by-word breakdown of Quranic text</li>
+    </ul>
+    </p><br>''';
+
 final DatabaseAccess databaseObject = new DatabaseAccess();
 final Future<Database> databaseConnection =
     DatabaseAccess().openDatabaseConnection();

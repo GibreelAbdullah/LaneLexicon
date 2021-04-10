@@ -9,6 +9,11 @@ Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechne
 
 ## Release Notes
 
+#### V - 1.1.2+10 (10 April, 2021) 
+- Quran Occurrence 
+- Errors Fixed (Thanks Abu Lubabah Saheed)
+- Added Cortsey section in About App
+
 #### V - 1.1.1+9 (03 April, 2021) 
 - Bug Fix (changed n to /n)
 

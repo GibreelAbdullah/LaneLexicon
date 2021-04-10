@@ -37,6 +37,14 @@ class _AboutAppState extends State<AboutApp> {
                   child: Divider(),
                 ),
                 HtmlWidget(
+                  DISCLAIMER,
+                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Divider(),
+                ),
+                HtmlWidget(
                   ABOUT_APP,
                   textStyle: Theme.of(context).textTheme.bodyText1!,
                 ),
@@ -93,7 +101,15 @@ class _AboutAppState extends State<AboutApp> {
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  DISCLAIMER,
+                  COURTSEY,
+                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Divider(),
+                ),
+                HtmlWidget(
+                  CONTACT_ME,
                   textStyle: Theme.of(context).textTheme.bodyText1!,
                 ),
                 Padding(

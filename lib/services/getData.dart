@@ -10,18 +10,18 @@ import '../constants/appConstants.dart';
 class DatabaseAccess {
   Future<Database> openDatabaseConnection() async {
     // Sqflite.devSetDebugModeOn(true);
-    var path = join(await getDatabasesPath(), "lanelexicon.db");
+    var path = join(await getDatabasesPath(), "lanelexiconV2.db");
     var exists = await databaseExists(path);
 
     if (!exists) {
       try {
         await Directory(dirname(path)).create(recursive: true);
       } catch (_) {}
-      ByteData data = await rootBundle.load(join("assets", "lanelexicon.db"));
+      ByteData data = await rootBundle.load(join("assets", "lanelexiconV2.db"));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes, flush: true);
-      var oldPath = join(await getDatabasesPath(), "lanelexiconV0.db");
+      var oldPath = join(await getDatabasesPath(), "lanelexicon.db");
       exists = await databaseExists(oldPath);
       if (exists) {
         databaseFactory.deleteDatabase(oldPath);
