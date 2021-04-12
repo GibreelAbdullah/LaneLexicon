@@ -1,8 +1,7 @@
-# HansWehrDictionary
+# Lane's Lexicon
 
-Dictionary of Modern Written Arabic by Hans Wehr
-
-Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.hanswehr
+Arabic English Lexicon or Lane's Lexicon is an Arabic English Lexicon by Edward William Lane.
+Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon
 
 ## Future Work
 - Justify Text Option
