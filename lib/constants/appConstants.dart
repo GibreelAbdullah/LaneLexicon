@@ -21,11 +21,9 @@ const String ABOUT_APP = '''
     <p style="text-align:center"><i><b>Lanes's Lexicon or Arabic-English Lexicon</b></i> is an Arabic-English dictionary compiled by 
     <a href="https://en.wikipedia.org/wiki/Edward_William_Lane" title="Edward William Lane">Edward William Lane</a>.<br>''';
 const String WHATS_NEW =
-    '''<p style="text-align:center"><b> WHAT'S NEW :</b> </p>
-    <p style="text-align:left">
-    - Multiple errors fixed in the text (Thanks Abu Lubaabah Saheed)<br>
-    - Occurrence of the words in the Qur'an<br>
-    </p> <p style="text-align:center"> <a href = "https://github.com/MuslimTechNet/LaneLexicon/blob/master/README.md">Source Code, Full Release Notes</a></p><br>''';
+    '''<p style="text-align:center"><b> What's New :</b><br>
+    - Splash Screen <br>
+    <a href = "https://github.com/MuslimTechNet/LaneLexicon/blob/master/README.md">Source Code, Full Release Notes and Future Work</a></p><br>''';
 const String COMMUNITY_INVITE =
     '''<p style="text-align:center">If you are a Muslim tech professional or aspiring to be one join the <br>
     <b>Muslim Tech Network</b></p><br>''';
