@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../constants/appConstants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
@@ -7,7 +6,7 @@ import 'package:share/share.dart';
 class CommonDrawer extends StatelessWidget {
   final String currentScreen;
 
-  const CommonDrawer({this.currentScreen});
+  const CommonDrawer({required this.currentScreen});
 
   @override
   Drawer build(BuildContext context) {
@@ -34,8 +33,14 @@ class CommonDrawer extends StatelessWidget {
                   ),
                   DrawerItem(
                     currentScreen: currentScreen,
-                    title: ABBREVIATIONS_SCREEN_TITLE,
-                    route: '/abbreviations',
+                    title: LEXICOLOGICAL_SCREEN_TITLE_SHORT,
+                    route: '/lexicologicalterms',
+                    icon: Icons.info,
+                  ),
+                  DrawerItem(
+                    currentScreen: currentScreen,
+                    title: AUTHORITIES_SCREEN_TITLE_SHORT,
+                    route: '/authorities',
                     icon: Icons.info,
                   ),
                   VerbForms(),
@@ -44,7 +49,16 @@ class CommonDrawer extends StatelessWidget {
               Column(
                 children: [
                   Divider(),
-                  Donate(),
+                  DrawerItem(
+                      currentScreen: currentScreen,
+                      title: MORE_APPS,
+                      route: '/moreapps',
+                      icon: Icons.more_horiz),
+                  DrawerItem(
+                      currentScreen: currentScreen,
+                      title: DONATE_SCREEN_TITLE,
+                      route: '/donate',
+                      icon: Icons.payment),
                   DrawerItem(
                       currentScreen: currentScreen,
                       title: SETTINGS_SCREEN_TITLE,
@@ -55,12 +69,6 @@ class CommonDrawer extends StatelessWidget {
                       title: ABOUT_APP_SCREEN_TITLE,
                       route: '/aboutus',
                       icon: Icons.people),
-                  // DrawerItem(
-                  //   currentScreen: currentScreen,
-                  //   title: NOTIFICATION_SCREEN_TITLE,
-                  //   route: '/notifications',
-                  //   icon: Icons.notifications,
-                  // ),
                   RateUs(),
                 ],
               ),
@@ -72,160 +80,6 @@ class CommonDrawer extends StatelessWidget {
   }
 }
 
-class Donate extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FlatButton(
-      onPressed: () {
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Center(
-                  child: Text(
-                'DONATE',
-                style: Theme.of(context).textTheme.bodyText1,
-              )),
-              titlePadding: const EdgeInsets.all(8.0),
-              contentPadding: const EdgeInsets.all(0.0),
-              content: Container(
-                height: MediaQuery.of(context).size.height * .7,
-                width: MediaQuery.of(context).size.width * .9,
-                child: Scaffold(
-                  body: Column(
-                    children: [
-                      PaymentMethod(
-                        assetImage: AssetImage('assets/paypal.png'),
-                        paymentLink: PAYPAL_LINK,
-                        errorMessage: "Unable to launch PayPal",
-                      ),
-                      PaymentMethod(
-                        assetImage: AssetImage('assets/upi.png'),
-                        paymentLink: UPI_LINK,
-                        errorMessage: "No UPI apps found!",
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                FlatButton(
-                  child: Text(
-                    'DISMISS',
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                  onPressed: Navigator.of(context).pop,
-                ),
-              ],
-            );
-          },
-        );
-      },
-      child: Row(
-        children: [
-          Icon(Icons.payment),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            'Donate',
-            style: Theme.of(context).textTheme.bodyText1,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class PaymentMethod extends StatelessWidget {
-  const PaymentMethod({
-    Key key,
-    this.paymentLink,
-    this.assetImage,
-    this.errorMessage,
-  }) : super(key: key);
-
-  final String paymentLink;
-  final AssetImage assetImage;
-  final String errorMessage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: FlatButton(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.payment,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  child: Image(
-                    image: assetImage,
-                  ),
-                  height: 80,
-                ),
-              ],
-            ),
-            CopyIcon(
-              paymentLink: paymentLink,
-            )
-          ],
-        ),
-        onPressed: () async {
-          if (await canLaunch(paymentLink)) {
-            launch(paymentLink);
-          } else {
-            Scaffold.of(context).showSnackBar(
-              SnackBar(
-                content: Text(errorMessage),
-              ),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class CopyIcon extends StatefulWidget {
-  final String paymentLink;
-
-  const CopyIcon({Key key, this.paymentLink}) : super(key: key);
-
-  @override
-  _CopyIconState createState() => _CopyIconState();
-}
-
-class _CopyIconState extends State<CopyIcon> {
-  IconData isCopied = Icons.copy;
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(isCopied),
-      onPressed: () {
-        Clipboard.setData(
-          new ClipboardData(text: widget.paymentLink),
-        );
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Copied"),
-          ),
-        );
-        setState(() {
-          isCopied = Icons.check;
-        });
-      },
-    );
-  }
-}
-
 class RateUs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -233,11 +87,12 @@ class RateUs extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: FlatButton(
+          child: TextButton(
             child: Row(
               children: [
                 Icon(
                   Icons.star,
+                  color: Theme.of(context).iconTheme.color,
                 ),
                 SizedBox(
                   width: 10,
@@ -249,15 +104,18 @@ class RateUs extends StatelessWidget {
               ],
             ),
             onPressed: () {
-              launch(PLAY_STORE_LINK);
+              launch(LANE_LEXICON_ANDROID_LINK);
             },
           ),
         ),
-        FlatButton(
-          child: Icon(Icons.share),
+        TextButton(
+          child: Icon(
+            Icons.share,
+            color: Theme.of(context).iconTheme.color,
+          ),
           onPressed: () {
-            Share.share(
-                'Check out this Hans Wehr Dictionary App : ' + PLAY_STORE_LINK);
+            Share.share('Check out this Hans Wehr Dictionary App : ' +
+                LANE_LEXICON_ANDROID_LINK);
           },
         ),
       ],
@@ -270,11 +128,16 @@ class DrawerItem extends StatelessWidget {
   final String title;
   final String route;
   final IconData icon;
-  DrawerItem({this.currentScreen, this.title, this.route, this.icon});
+  DrawerItem({
+    required this.currentScreen,
+    required this.title,
+    required this.route,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       onPressed: () {
         if (currentScreen != title) {
           if (currentScreen == SEARCH_SCREEN_TITLE) {
@@ -288,7 +151,10 @@ class DrawerItem extends StatelessWidget {
       },
       child: Row(
         children: [
-          Icon(icon),
+          Icon(
+            icon,
+            color: Theme.of(context).iconTheme.color,
+          ),
           SizedBox(
             width: 10,
           ),
@@ -305,7 +171,7 @@ class DrawerItem extends StatelessWidget {
 class VerbForms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       onPressed: () {
         Navigator.pop(context);
         showDialog(
@@ -331,9 +197,9 @@ class VerbForms extends StatelessWidget {
                         VERB_FORMS[i],
                         style: TextStyle(
                           fontFamily:
-                              Theme.of(context).textTheme.bodyText1.fontFamily,
+                              Theme.of(context).textTheme.bodyText1!.fontFamily,
                           fontSize:
-                              Theme.of(context).textTheme.bodyText1.fontSize,
+                              Theme.of(context).textTheme.bodyText1!.fontSize,
                         ),
                       ),
                       expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +223,7 @@ class VerbForms extends StatelessWidget {
                 ),
               ),
               actions: [
-                FlatButton(
+                TextButton(
                   child: Text(
                     'DISMISS',
                     style: Theme.of(context).textTheme.bodyText2,
@@ -371,7 +237,10 @@ class VerbForms extends StatelessWidget {
       },
       child: Row(
         children: [
-          Icon(Icons.info),
+          Icon(
+            Icons.info,
+            color: Theme.of(context).iconTheme.color,
+          ),
           SizedBox(
             width: 10,
           ),

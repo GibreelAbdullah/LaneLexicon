@@ -10,22 +10,20 @@ import '../constants/appConstants.dart';
 class DatabaseAccess {
   Future<Database> openDatabaseConnection() async {
     // Sqflite.devSetDebugModeOn(true);
-    var path = join(await getDatabasesPath(), "lanelexicon.db");
+    var path = join(await getDatabasesPath(), "lanelexiconV2.db");
     var exists = await databaseExists(path);
 
     if (!exists) {
-      print("HansWehr DB V5 doesn't exist");
       try {
         await Directory(dirname(path)).create(recursive: true);
       } catch (_) {}
-      ByteData data = await rootBundle.load(join("assets", "lanelexicon.db"));
+      ByteData data = await rootBundle.load(join("assets", "lanelexiconV2.db"));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes, flush: true);
-      var oldPath = join(await getDatabasesPath(), "hanswehrV5.db");
+      var oldPath = join(await getDatabasesPath(), "lanelexicon.db");
       exists = await databaseExists(oldPath);
       if (exists) {
-        print("HansWehr DB V5 exist");
         databaseFactory.deleteDatabase(oldPath);
       }
     }
@@ -33,9 +31,9 @@ class DatabaseAccess {
     return db;
   }
 
-  Future<List<String>> allWords() async {
+  Future<List<String?>> allWords() async {
     Database db = await databaseConnection;
-    List<String> allDictionaryWords = [];
+    List<String?> allDictionaryWords = [];
     List<Map> mapOfWords =
         await db.rawQuery('SELECT WORD FROM DICTIONARY WHERE IS_ROOT = 1');
 
@@ -53,9 +51,9 @@ class DatabaseAccess {
     return allDictionaryWords;
   }
 
-  Future<DefinitionClass> definition(String word, String type) async {
+  Future<DefinitionClass> definition(String? word, String? type) async {
     Database db = await databaseConnection;
-    String query;
+    late String query;
     switch (type) {
       case "BrowseScreen":
         query =
@@ -93,21 +91,20 @@ class DatabaseAccess {
         } else if (key == 'highlight') {
           allDefinitions.highlight.add(value);
         } else if (key == 'quran_occurance') {
-          allDefinitions.quranOccurance.add(value);
+          allDefinitions.quranOccurance!.add(value);
         }
       });
     });
-    print(allDefinitions);
     return allDefinitions;
   }
 
-  Future<List<String>> topFiveWords(String word) async {
+  Future<List<String?>> topFiveWords(String word) async {
     Database db = await databaseConnection;
 
     String query =
         "SELECT DISTINCT WORD FROM DICTIONARY WHERE WORD like '$word%' ORDER BY LENGTH(WORD), WORD LIMIT 6";
     List<Map<String, dynamic>> definition = await db.rawQuery(query);
-    List<String> allWords = [];
+    List<String?> allWords = [];
 
     definition.forEach((element) {
       element.forEach((key, value) {
@@ -117,16 +114,16 @@ class DatabaseAccess {
     return allWords;
   }
 
-  Future<List<String>> allXLevelWords(String word, int length) async {
+  Future<List<String?>> allXLevelWords(String? word, int length) async {
     Database db = await databaseConnection;
 
     String query = length == 2
         ? "select distinct substr(word,1,2) from dictionary where WORD like '$word%' and is_root = 1 order by word"
-        : (word.length == 1
+        : (word!.length == 1
             ? "SELECT DISTINCT WORD FROM DICTIONARY WHERE WORD = '$word' AND IS_ROOT = 1"
             : "SELECT DISTINCT WORD FROM DICTIONARY WHERE WORD like '$word%' AND IS_ROOT = 1");
     List<Map<String, dynamic>> definition = await db.rawQuery(query);
-    List<String> allWords = [];
+    List<String?> allWords = [];
 
     definition.forEach((element) {
       element.forEach((key, value) {
@@ -136,14 +133,13 @@ class DatabaseAccess {
     return allWords;
   }
 
-  Future<List<Map<String, dynamic>>> quranicDetails(String word) async {
+  Future<List<Map<String, dynamic>>> quranicDetails(String? word) async {
     Database db = await databaseConnection;
 
     String query =
         "SELECT SURAH, AYAH, WORD as POSITION FROM quran WHERE root_word = '$word'";
     List<Map<String, dynamic>> quranLocation = await db.rawQuery(query);
 
-    print(123);
     return quranLocation;
   }
 

@@ -12,7 +12,9 @@ ThemeData lightTheme = ThemeData.light().copyWith(
         bodyText2: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
-          color: hexToColor(locator<LocalStorageService>().highlightTextColor),
+          color:
+              hexToColor(locator<LocalStorageService>().highlightTextColor) ??
+                  Colors.black,
         ),
         subtitle1: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
@@ -54,7 +56,9 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
         bodyText2: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
-          color: hexToColor(locator<LocalStorageService>().highlightTextColor),
+          color:
+              hexToColor(locator<LocalStorageService>().highlightTextColor) ??
+                  Colors.white,
         ),
         //Used By Expansion Tile
         subtitle1: TextStyle(
@@ -85,6 +89,6 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   iconTheme: IconThemeData(color: Colors.white),
 );
 
-Color hexToColor(String code) {
+Color? hexToColor(String? code) {
   return code == null ? null : Color(int.parse(code));
 }
