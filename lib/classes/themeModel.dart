@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../serviceLocator.dart';
 import '../services/LocalStorageService.dart';
 import 'appTheme.dart';
@@ -27,6 +28,11 @@ class ThemeModel extends ChangeNotifier {
                     fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
                     color: Colors.white,
                   ),
+                  subtitle2: TextStyle(
+                    fontFamily: locator<LocalStorageService>().font,
+                    fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
+                    color: Colors.black,
+                  ),
                   headline6: TextStyle(
                     fontFamily: locator<LocalStorageService>().font,
                     fontSize: 20 + locator<LocalStorageService>().fontSizeDelta,
@@ -35,8 +41,8 @@ class ThemeModel extends ChangeNotifier {
                 ),
             primaryColor:
                 hexToColor(locator<LocalStorageService>().highlightTextColor),
-            accentColor:
-                hexToColor(locator<LocalStorageService>().highlightTextColor),
+            // accentColor:
+            //     hexToColor(locator<LocalStorageService>().highlightTextColor),
             canvasColor:
                 hexToColor(locator<LocalStorageService>().backgroundColor),
             scaffoldBackgroundColor:
@@ -46,7 +52,7 @@ class ThemeModel extends ChangeNotifier {
               color:
                   hexToColor(locator<LocalStorageService>().searchBarColor) ??
                       Colors.grey[850],
-              brightness: Brightness.dark,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
             ),
             dialogBackgroundColor:
                 hexToColor(locator<LocalStorageService>().backgroundColor),
@@ -65,7 +71,14 @@ class ThemeModel extends ChangeNotifier {
                         locator<LocalStorageService>().highlightTextColor),
                   ),
                   subtitle1: TextStyle(
+                    fontFamily: locator<LocalStorageService>().font,
+                    fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
                     color: Colors.black,
+                  ),
+                  subtitle2: TextStyle(
+                    fontFamily: locator<LocalStorageService>().font,
+                    fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
+                    color: Colors.white,
                   ),
                   headline6: TextStyle(
                     fontFamily: locator<LocalStorageService>().font,
@@ -75,8 +88,8 @@ class ThemeModel extends ChangeNotifier {
                 ),
             primaryColor:
                 hexToColor(locator<LocalStorageService>().highlightTextColor),
-            accentColor:
-                hexToColor(locator<LocalStorageService>().highlightTextColor),
+            // accentColor:
+            //     hexToColor(locator<LocalStorageService>().highlightTextColor),
             canvasColor:
                 hexToColor(locator<LocalStorageService>().backgroundColor),
             scaffoldBackgroundColor:
@@ -86,7 +99,7 @@ class ThemeModel extends ChangeNotifier {
               color:
                   hexToColor(locator<LocalStorageService>().searchBarColor) ??
                       Colors.grey[100],
-              brightness: Brightness.light,
+              systemOverlayStyle: SystemUiOverlayStyle.light,
             ),
             brightness: Brightness.light,
             dialogBackgroundColor:

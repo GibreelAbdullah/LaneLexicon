@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/appConstants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CommonDrawer extends StatelessWidget {
   final String currentScreen;
@@ -31,6 +31,39 @@ class CommonDrawer extends StatelessWidget {
                     route: '/browse',
                     icon: Icons.list,
                   ),
+                  TextButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.book,
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Preface',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.launch,
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      launchUrl(prefaceUri);
+                    },
+                  ),
                   DrawerItem(
                     currentScreen: currentScreen,
                     title: LEXICOLOGICAL_SCREEN_TITLE_SHORT,
@@ -54,11 +87,6 @@ class CommonDrawer extends StatelessWidget {
                       title: MORE_APPS,
                       route: '/moreapps',
                       icon: Icons.more_horiz),
-                  DrawerItem(
-                      currentScreen: currentScreen,
-                      title: DONATE_SCREEN_TITLE,
-                      route: '/donate',
-                      icon: Icons.payment),
                   DrawerItem(
                       currentScreen: currentScreen,
                       title: SETTINGS_SCREEN_TITLE,
@@ -104,7 +132,8 @@ class RateUs extends StatelessWidget {
               ],
             ),
             onPressed: () {
-              launch(LANE_LEXICON_ANDROID_LINK);
+              launchUrl(lanesLexiconAndroidUri,
+                  mode: LaunchMode.externalApplication);
             },
           ),
         ),
@@ -115,7 +144,7 @@ class RateUs extends StatelessWidget {
           ),
           onPressed: () {
             Share.share('Check out this Hans Wehr Dictionary App : ' +
-                LANE_LEXICON_ANDROID_LINK);
+                lanesLexiconAndroidUri.toString());
           },
         ),
       ],
@@ -192,6 +221,8 @@ class VerbForms extends StatelessWidget {
                   itemCount: VERB_FORMS.length,
                   itemBuilder: (_, i) {
                     return ExpansionTile(
+                      iconColor: Theme.of(context).textTheme.bodyText2!.color,
+                      textColor: Theme.of(context).textTheme.bodyText2!.color,
                       childrenPadding: EdgeInsets.fromLTRB(30, 0, 16, 0),
                       title: Text(
                         VERB_FORMS[i],

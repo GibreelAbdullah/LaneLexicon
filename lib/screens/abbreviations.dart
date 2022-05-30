@@ -21,7 +21,7 @@ class Abbreviations extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.headline6,
         ),
-        backgroundColor: Theme.of(context).appBarTheme.color,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         iconTheme: Theme.of(context).iconTheme,
       ),
       drawer: CommonDrawer(currentScreen: title),

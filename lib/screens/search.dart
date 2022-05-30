@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:implicitly_animated_reorderable_list/implicitly_animated_reorderable_list.dart';
 import 'package:implicitly_animated_reorderable_list/transitions.dart';
@@ -32,26 +31,35 @@ class _SearchState extends State<Search> {
     setState(() {});
   }
 
-  // String searchType = '';
-
   @override
   Widget build(BuildContext context) {
-    // Provider.of<ThemeModel>(context, listen: false).refreshTheme();
-
     return ChangeNotifierProvider<SearchModel>(
       create: (_) => SearchModel(),
       child: ChangeNotifierProvider<DefinitionClass>(
         create: (_) => DefinitionClass(
+          id: [],
           word: [],
           definition: [],
           isRoot: [],
           highlight: [],
-          quranOccurance: [],
+          quranOccurrence: [],
+          favoriteFlag: [],
         ),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          drawer: CommonDrawer(currentScreen: SEARCH_SCREEN_TITLE),
-          body: buildSearchBar(),
+        child: WillPopScope(
+          onWillPop: () {
+            if (DefinitionClass.searchType == null) {
+              return Future.value(true);
+            }
+            setState(() {
+              DefinitionClass.searchType = null;
+            });
+            return Future.value(false);
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            drawer: CommonDrawer(currentScreen: SEARCH_SCREEN_TITLE),
+            body: buildSearchBar(),
+          ),
         ),
       ),
     );
@@ -69,7 +77,6 @@ class _SearchState extends State<Search> {
 
     return Consumer<SearchModel>(
       builder: (context, model, _) => FloatingSearchBar(
-        automaticallyImplyBackButton: false,
         controller: controller,
         clearQueryOnClose: false,
         hint: 'Arabic/English العربية/الإنكليزية',
@@ -103,24 +110,28 @@ class _SearchState extends State<Search> {
   void buildDefinitionOnSubmission(
       BuildContext context, String searchWord) async {
     final definitionList = Provider.of<DefinitionClass>(context, listen: false);
-    definitionList.searchType = 'FullTextSearch';
+    DefinitionClass.searchType = 'FullTextSearch';
     DefinitionClass value =
-        await databaseObject.definition(searchWord, definitionList.searchType);
-    setState(() {
-      definitionList.searchWord = searchWord;
-      definitionList.word = value.word;
-      definitionList.definition = value.definition;
-      definitionList.isRoot = value.isRoot;
-      definitionList.highlight = value.highlight;
-      definitionList.quranOccurance = value.quranOccurance;
-    });
+        await databaseObject.definition(searchWord, DefinitionClass.searchType);
+    setState(
+      () {
+        definitionList.id = value.id;
+        definitionList.searchWord = searchWord;
+        definitionList.word = value.word;
+        definitionList.definition = value.definition;
+        definitionList.isRoot = value.isRoot;
+        definitionList.highlight = value.highlight;
+        definitionList.quranOccurrence = value.quranOccurrence;
+        definitionList.favoriteFlag = value.favoriteFlag;
+      },
+    );
   }
 
   Widget buildExpandableBody(SearchModel model) {
     return Material(
       elevation: 4.0,
       borderRadius: BorderRadius.circular(8),
-      child: ImplicitlyAnimatedList<String?>(
+      child: ImplicitlyAnimatedList<String>(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
@@ -129,13 +140,13 @@ class _SearchState extends State<Search> {
         itemBuilder: (context, animation, word, i) {
           return SizeFadeTransition(
             animation: animation,
-            child: buildItem(context, word!),
+            child: buildItem(context, word),
           );
         },
         updateItemBuilder: (context, animation, word) {
           return FadeTransition(
             opacity: animation,
-            child: buildItem(context, word!),
+            child: buildItem(context, word),
           );
         },
       ),
@@ -151,7 +162,7 @@ class _SearchState extends State<Search> {
       children: [
         InkWell(
           onTap: () {
-            definitionList.searchType =
+            DefinitionClass.searchType =
                 ALL_ALPHABETS.contains(word.substring(0, 1))
                     ? 'RootSearch'
                     : 'FullTextSearch';
@@ -162,15 +173,19 @@ class _SearchState extends State<Search> {
               () => model.clear(),
             );
             FloatingSearchBar.of(context)!.close();
-            databaseObject
-                .definition(word, definitionList.searchType)
-                .then((value) => setState(() {
+            databaseObject.definition(word, DefinitionClass.searchType).then(
+                  (value) => setState(
+                    () {
+                      definitionList.id = value.id;
                       definitionList.word = value.word;
                       definitionList.definition = value.definition;
                       definitionList.isRoot = value.isRoot;
                       definitionList.highlight = value.highlight;
-                      definitionList.quranOccurance = value.quranOccurance;
-                    }));
+                      definitionList.quranOccurrence = value.quranOccurrence;
+                      definitionList.favoriteFlag = value.favoriteFlag;
+                    },
+                  ),
+                );
           },
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -232,6 +247,22 @@ class _SearchState extends State<Search> {
           ),
         ),
       ],
+    );
+  }
+
+  void home(BuildContext context) {
+    final definitionList = Provider.of<DefinitionClass>(context, listen: false);
+
+    setState(
+      () {
+        DefinitionClass.searchType = null;
+        definitionList.searchWord = null;
+        definitionList.word = [];
+        definitionList.definition = [];
+        definitionList.isRoot = [];
+        definitionList.highlight = [];
+        definitionList.quranOccurrence = [];
+      },
     );
   }
 }
