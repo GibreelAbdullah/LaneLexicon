@@ -5,11 +5,11 @@ Dictionary of Modern Written Arabic by Hans Wehr
 Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon
 
 ## Future Work
-- Justify Text Option
+- Quranic Words
 
 ## Release Notes
 
-#### V - 2.1.0+14 (27 May, 2022) 
+#### V - 2.1.0+14 (30 May, 2022) 
 - Design Changes
 - Quranle integration
 

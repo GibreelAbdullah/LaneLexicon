@@ -5,7 +5,7 @@ import './serviceLocator.dart';
 import './services/appReview.dart';
 import './routes.dart';
 
-  void main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator().then(
     (value) => runApp(
