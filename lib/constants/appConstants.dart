@@ -26,13 +26,13 @@ const String FOR_HIRE_IMAGE = 'assets/ForHire.webp';
 final Uri quranleUri = Uri(
   scheme: "https",
   host: "www.quranle.com",
-  queryParameters: {'ref': 'HansWehr'},
+  queryParameters: {'ref': 'LaneLexicon'},
 );
 
 final Uri portfolioUri = Uri(
   scheme: "https",
   host: "gibreelabdullah.github.io",
-  queryParameters: {'ref': 'HansWehr'},
+  queryParameters: {'ref': 'LaneLexicon'},
 );
 
 final Uri hansWehrAndroidUri = Uri(
