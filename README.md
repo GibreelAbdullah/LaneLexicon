@@ -1,6 +1,6 @@
-# HansWehrDictionary
+# Lane's Lexicon
 
-Dictionary of Modern Written Arabic by Hans Wehr
+Lane's Arabic English Lexicon
 
 Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon
 

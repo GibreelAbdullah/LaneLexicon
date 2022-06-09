@@ -143,7 +143,7 @@ class RateUs extends StatelessWidget {
             color: Theme.of(context).iconTheme.color,
           ),
           onPressed: () {
-            Share.share('Check out this Hans Wehr Dictionary App : ' +
+            Share.share('Check out this Lane' 's Lexicon App : ' +
                 lanesLexiconAndroidUri.toString());
           },
         ),
