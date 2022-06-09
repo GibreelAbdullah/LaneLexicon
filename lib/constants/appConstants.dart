@@ -23,6 +23,8 @@ const String FAV_IMAGE = 'assets/like_button.jpg';
 const String DONATE_IMAGE = 'assets/donate.jpg';
 const String QURANLE_IMAGE = 'assets/Quranle.jpg';
 const String FOR_HIRE_IMAGE = 'assets/ForHire.webp';
+const String QURAN_IMAGE = 'assets/quran.jpg';
+
 final Uri quranleUri = Uri(
   scheme: "https",
   host: "www.quranle.com",
@@ -78,8 +80,8 @@ const String ABOUT_APP = '''
     <a href="https://en.wikipedia.org/wiki/Edward_William_Lane" title="Edward William Lane">Edward William Lane</a>.<br>''';
 const String WHATS_NEW =
     '''<p style="text-align:center"><b> What's New :</b><br>
-    - Design Changes<br>
-    - Quranle integration<br>
+    - Quranic Words<br>
+    - Design improvements<br>
     <a href = "https://github.com/MuslimTechNet/LaneLexicon">Source Code, Full Release Notes and Future Work</a></p><br>''';
 const String COMMUNITY_INVITE =
     '''<p style="text-align:center">If you are a Muslim tech professional or aspiring to be one join the <br>

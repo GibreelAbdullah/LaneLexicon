@@ -9,6 +9,10 @@ Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechne
 
 ## Release Notes
 
+#### V - 2.2.0+15 (09 June, 2022) 
+- Quranic Words
+- Design improvements
+
 #### V - 2.1.0+14 (30 May, 2022) 
 - Design Changes
 - Quranle integration
