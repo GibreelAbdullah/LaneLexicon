@@ -1,6 +1,6 @@
 # Lane's Lexicon
 
-Lane's Arabic English Lexicon
+Arabic English Lexicon or Lane's Lexicon is an Arabic English Lexicon by Edward William Lane.
 
 Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon
 
