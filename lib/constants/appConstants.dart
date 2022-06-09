@@ -9,12 +9,70 @@ const String LEXICOLOGICAL_SCREEN_TITLE = 'Lexicological and Grammatical Terms';
 const String LEXICOLOGICAL_SCREEN_TITLE_SHORT = 'Lexical Terms';
 const String AUTHORITIES_SCREEN_TITLE = 'Indications of Authorities';
 const String AUTHORITIES_SCREEN_TITLE_SHORT = 'Authorities';
+const String ABBREVIATIONS_SCREEN_TITLE = 'Abbreviations';
 const String SEARCH_SCREEN_TITLE = 'Search';
 const String BROWSE_SCREEN_TITLE = 'Browse';
 const String NOTIFICATION_SCREEN_TITLE = 'Notifications';
 const String DONATE_SCREEN_TITLE = 'Donate';
+const String FAVORITES_SCREEN_TITLE = 'Favorites';
+const String HISTORY_SCREEN_TITLE = 'History';
 const String MORE_APPS = 'More Apps';
 const String ALL_MY_APPS = 'All Apps By Me';
+
+const String FAV_IMAGE = 'assets/like_button.jpg';
+const String DONATE_IMAGE = 'assets/donate.jpg';
+const String QURANLE_IMAGE = 'assets/Quranle.jpg';
+const String FOR_HIRE_IMAGE = 'assets/ForHire.webp';
+const String QURAN_IMAGE = 'assets/quran.jpg';
+
+final Uri quranleUri = Uri(
+  scheme: "https",
+  host: "www.quranle.com",
+  queryParameters: {'ref': 'LaneLexicon'},
+);
+
+final Uri portfolioUri = Uri(
+  scheme: "https",
+  host: "gibreelabdullah.github.io",
+  queryParameters: {'ref': 'LaneLexicon'},
+);
+
+final Uri hansWehrAndroidUri = Uri(
+  scheme: "https",
+  host: "play.google.com",
+  path: "store/apps/details",
+  queryParameters: {'id': 'com.muslimtechnet.hanswehr'},
+);
+
+final Uri lanesLexiconAndroidUri = Uri(
+  scheme: "https",
+  host: "play.google.com",
+  path: "store/apps/details",
+  queryParameters: {'id': 'com.muslimtechnet.lanelexicon'},
+);
+
+final Uri githubUri = Uri(
+  scheme: "https",
+  host: "github.com",
+  path: "GibreelAbdullah",
+);
+
+final Uri linkedinUri = Uri(
+  scheme: "https",
+  host: "linkedin.com",
+  path: "in/gibreel-abdullah",
+);
+
+final Uri prefaceUri = Uri(
+  scheme: "https",
+  host: "laneslexicon.github.io",
+  path: "lexicon/site/lane/preface",
+);
+
+final Uri donateUri = Uri(
+  scheme: 'https',
+  host: 'donate.islamic-relief.org',
+);
 
 const String ABOUT_APP = '''
     <br>
@@ -22,21 +80,24 @@ const String ABOUT_APP = '''
     <a href="https://en.wikipedia.org/wiki/Edward_William_Lane" title="Edward William Lane">Edward William Lane</a>.<br>''';
 const String WHATS_NEW =
     '''<p style="text-align:center"><b> What's New :</b><br>
-    - Splash Screen <br>
-    <a href = "https://github.com/MuslimTechNet/LaneLexicon/blob/master/README.md">Source Code, Full Release Notes and Future Work</a></p><br>''';
+    - Quranic Words<br>
+    - Design improvements<br>
+    <a href = "https://github.com/MuslimTechNet/LaneLexicon">Source Code, Full Release Notes and Future Work</a></p><br>''';
 const String COMMUNITY_INVITE =
     '''<p style="text-align:center">If you are a Muslim tech professional or aspiring to be one join the <br>
     <b>Muslim Tech Network</b></p><br>''';
-const String DISCORD_INVITE_LINK = 'https://discord.gg/QFKwtFC';
-const String REDDIT_INVITE_LINK = 'https://www.reddit.com/r/muslimtechnet/';
-const String DONATE_LINK = 'https://www.islamic-relief.org/';
 
 const String DISCLAIMER =
     '''<p style="text-align:center"><b>DISCLAIMER - Not 100% Accurate.</b></br>
-    Text was extracted from scanned pages and may have errors.</br></p><br>''';
+    Text was extracted from scanned pages and may have errors.</p>''';
 
-const String CONTACT_ME = '''<p style="text-align:center"><b>CONTACT ME</b></br>
-    If you have an idea for an app or have a job offer <br><a href = "mailto: gibreel.khan@gmail.com">gibreel.khan@gmail.com</a><br></p><br>''';
+const String CONTACT_ME =
+    '<p style="text-align:center"><b>CONTACT ME</b><br><br>';
+
+const String EMAIL = "gibreel.khan@gmail.com";
+
+const String SOCIAL_PROFILES =
+    '<p style="text-align:center"><b>SOCAIL PROFILES</b><br><br>';
 
 const String COURTSEY = '''<p style="text-align:center"><b>COURTSEY</b>
     <ul>
@@ -45,16 +106,9 @@ const String COURTSEY = '''<p style="text-align:center"><b>COURTSEY</b>
       <li><a href="https://corpus.quran.com/">Quran.com</a> for their word-by-word breakdown of Quranic text</li>
     </ul>
     </p><br>''';
-
 final DatabaseAccess databaseObject = new DatabaseAccess();
 final Future<Database> databaseConnection =
     DatabaseAccess().openDatabaseConnection();
-
-const String LANE_LEXICON_ANDROID_LINK =
-    'https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon';
-
-const String HANS_WEHR_ANDROID_LINK =
-    'https://play.google.com/store/apps/details?id=com.muslimtechnet.hanswehr';
 
 const List<String> VERB_FORMS = [
   'I - فَعَل/فَعُل/فَعِل',
@@ -663,7 +717,9 @@ const List<String> AUTHORITIES_FULL_FORMS = [
   'Ez-Zubeydee, author of an "Abridgement of the \'Eyn"',
   'Ez-Zejjáj',
   '',
-  '‡ means asserted to be tropical.',
-  '‡‡ means asserted to be doubly tropical.',
-  '† means supposed by me to tropical. ',
+  'All authorities are drawn through the medium of the Táj el-'
+      'Aroos or the Lisán el-'
+      'Arab except denoted by below marks.',
+  '‡ - drawn immediately, from many of them they are drawn through the medium of some other lexicon than those two above.',
+  '† - generally drawn immediately.',
 ];

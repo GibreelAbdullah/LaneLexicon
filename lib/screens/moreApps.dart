@@ -13,10 +13,10 @@ class MoreApps extends StatelessWidget {
           ALL_MY_APPS,
           style: Theme.of(context).textTheme.headline6,
         ),
-        backgroundColor: Theme.of(context).appBarTheme.color,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         iconTheme: Theme.of(context).iconTheme,
       ),
-      drawer: CommonDrawer(currentScreen: MORE_APPS),
+      drawer: CommonDrawer(currentScreen: ALL_MY_APPS),
       body: Column(
         children: [
           Padding(padding: EdgeInsets.all(8)),
@@ -31,7 +31,8 @@ class MoreApps extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyText1,
             ),
             onTap: () {
-              launch(HANS_WEHR_ANDROID_LINK);
+              launchUrl(hansWehrAndroidUri,
+                  mode: LaunchMode.externalApplication);
             },
           ),
           Padding(padding: EdgeInsets.all(8)),
@@ -46,7 +47,8 @@ class MoreApps extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyText1,
             ),
             onTap: () {
-              launch(LANE_LEXICON_ANDROID_LINK);
+              launchUrl(lanesLexiconAndroidUri,
+                  mode: LaunchMode.externalApplication);
             },
           ),
         ],

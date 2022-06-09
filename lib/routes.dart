@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
-import 'package:lane_lexicon/screens/moreApps.dart';
-// import './screens/notifications.dart';
+import '../screens/history.dart';
+import './screens/favorites.dart';
+import './screens/moreApps.dart';
 import 'constants/appConstants.dart';
-import 'screens/abbreviations.dart';
+import './screens/abbreviations.dart';
 import './screens/aboutApp.dart';
 import './screens/browse.dart';
 import './screens/search.dart';
@@ -26,4 +27,6 @@ Map<String, WidgetBuilder> routes = {
   '/moreapps': (context) => MoreApps(),
   '/donate': (context) => Donate(),
   '/settings': (context) => Settings(),
+  '/favorites': (context) => Favorites(),
+  '/history': (context) => History(),
 };

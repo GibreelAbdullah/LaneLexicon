@@ -5,9 +5,17 @@ Arabic English Lexicon or Lane's Lexicon is an Arabic English Lexicon by Edward 
 Play Store Link - https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon
 
 ## Future Work
-- Justify Text Option
+- Quranic Words
 
 ## Release Notes
+
+#### V - 2.2.0+15 (09 June, 2022) 
+- Quranic Words
+- Design improvements
+
+#### V - 2.1.0+14 (30 May, 2022) 
+- Design Changes
+- Quranle integration
 
 #### V - 1.2.0+11 (12 April, 2021) 
 - Splash Screen
