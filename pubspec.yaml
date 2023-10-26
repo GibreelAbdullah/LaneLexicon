@@ -1,35 +1,38 @@
 name: lanelexicon
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 2.2.0+15
+version: 2.4.0+17
 
 environment:
-  sdk: '>=2.16.0 <3.0.0'
-  
+  sdk: ">=2.16.0 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
-  sqflite: ^2.0.2+1
-  path: ^1.8.0
-  http: ^0.13.4
-  material_floating_search_bar: ^0.3.7
-  provider: ^6.0.2
-  implicitly_animated_reorderable_list: 0.4.2
-  flutter_widget_from_html: ^0.8.5
-  url_launcher: ^6.1.2
-  cupertino_icons: ^1.0.4
-  shared_preferences: ^2.0.15
-  get_it: ^7.2.0
-  share_plus: ^4.0.4
-  in_app_review: ^2.0.3
+  path: ^1.8.3
+  http: ^1.1.0
+  material_floating_search_bar_2: ^0.5.0
+  provider: ^6.0.5
+  implicitly_animated_reorderable_list_2: ^0.5.1
+  flutter_widget_from_html: ^0.14.4
+  url_launcher: ^6.1.14
+  cupertino_icons: ^1.0.6
+  shared_preferences: ^2.2.2
+  share_plus: ^7.2.1
+  get_it: ^7.6.4
+  in_app_review: ^2.0.8
   flutter_colorpicker: ^1.0.3
+  sqflite_common_ffi: ^2.3.0+2
+  html: ^0.15.4
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.9.0
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
+  build_runner: ^2.4.6
+  flutter_lints: ^3.0.0
 
 flutter_icons:
   # ios: true
@@ -48,6 +51,6 @@ flutter:
   assets:
     - assets/
   fonts:
-  - family: Amiri
-    fonts:
-      - asset: fonts/Amiri-Regular.ttf
+    - family: Amiri
+      fonts:
+        - asset: fonts/Amiri-Regular.ttf

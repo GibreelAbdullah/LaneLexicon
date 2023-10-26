@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../constants/appConstants.dart';
+import '../constants/app_constants.dart';
 import 'browse.dart';
 
 class QuranicWords extends StatefulWidget {
   const QuranicWords({Key? key}) : super(key: key);
   @override
-  _QuranicWordsState createState() => _QuranicWordsState();
+  State<QuranicWords> createState() => _QuranicWordsState();
 }
 
 class _QuranicWordsState extends State<QuranicWords> {
@@ -21,22 +21,22 @@ class _QuranicWordsState extends State<QuranicWords> {
               'QURANIC WORDS',
               textAlign: TextAlign.center,
               textScaleFactor: 2,
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListTile(
-                leading: Text(''),
+                leading: const Text(''),
                 title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "WORD",
-                        style: Theme.of(context).textTheme.headline6,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       Text(
                         "OCCURRENCES",
-                        style: Theme.of(context).textTheme.headline6,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ]),
               ),
@@ -59,7 +59,7 @@ class _QuranicWordsState extends State<QuranicWords> {
                                   : Theme.of(context)
                                       .primaryColor
                                       .withAlpha(20),
-                              borderRadius: BorderRadius.all(
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(10),
                               ),
                             ),
@@ -72,11 +72,11 @@ class _QuranicWordsState extends State<QuranicWords> {
                                 '${j + 1} ',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText1!
+                                    .bodyLarge!
                                     .copyWith(
                                         color: Theme.of(context)
                                             .textTheme
-                                            .bodyText1!
+                                            .bodyLarge!
                                             .color!
                                             .withAlpha(100)),
                               ),
@@ -87,13 +87,13 @@ class _QuranicWordsState extends State<QuranicWords> {
                                   Text(
                                     quranicWords.data![j]['word'],
                                     style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                        Theme.of(context).textTheme.bodyLarge,
                                   ),
                                   Text(
                                     quranicWords.data![j]['quran_occurrence']
                                         .toString(),
                                     style:
-                                        Theme.of(context).textTheme.bodyText2,
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -104,7 +104,7 @@ class _QuranicWordsState extends State<QuranicWords> {
                     ),
                   );
                 } else {
-                  return Expanded(
+                  return const Expanded(
                     child: Center(
                       child: CircularProgressIndicator(),
                     ),

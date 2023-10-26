@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import '../constants/appConstants.dart';
+import '../constants/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CommonDrawer extends StatelessWidget {
   final String currentScreen;
 
-  const CommonDrawer({required this.currentScreen});
+  const CommonDrawer({Key? key, required this.currentScreen}) : super(key: key);
 
   @override
   Drawer build(BuildContext context) {
     return Drawer(
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 65),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 65),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -21,13 +21,13 @@ class CommonDrawer extends StatelessWidget {
                 children: [
                   DrawerItem(
                     currentScreen: currentScreen,
-                    title: SEARCH_SCREEN_TITLE,
+                    title: searchScreenTitle,
                     route: '/search',
                     icon: Icons.search,
                   ),
                   DrawerItem(
                     currentScreen: currentScreen,
-                    title: BROWSE_SCREEN_TITLE,
+                    title: browseScreenTitle,
                     route: '/browse',
                     icon: Icons.list,
                   ),
@@ -41,12 +41,12 @@ class CommonDrawer extends StatelessWidget {
                               Icons.book,
                               color: Theme.of(context).iconTheme.color,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
                               'Preface',
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ],
                         ),
@@ -66,38 +66,38 @@ class CommonDrawer extends StatelessWidget {
                   ),
                   DrawerItem(
                     currentScreen: currentScreen,
-                    title: LEXICOLOGICAL_SCREEN_TITLE_SHORT,
+                    title: lexicologicalScreenTitleShort,
                     route: '/lexicologicalterms',
                     icon: Icons.info,
                   ),
                   DrawerItem(
                     currentScreen: currentScreen,
-                    title: AUTHORITIES_SCREEN_TITLE_SHORT,
+                    title: authoritiesScreenTitleShort,
                     route: '/authorities',
                     icon: Icons.info,
                   ),
-                  VerbForms(),
+                  const VerbForms(),
                 ],
               ),
               Column(
                 children: [
-                  Divider(),
+                  const Divider(),
                   DrawerItem(
                       currentScreen: currentScreen,
-                      title: MORE_APPS,
+                      title: moreApps,
                       route: '/moreapps',
                       icon: Icons.more_horiz),
                   DrawerItem(
                       currentScreen: currentScreen,
-                      title: SETTINGS_SCREEN_TITLE,
+                      title: settingsScreenTitle,
                       route: '/settings',
                       icon: Icons.settings),
                   DrawerItem(
                       currentScreen: currentScreen,
-                      title: ABOUT_APP_SCREEN_TITLE,
+                      title: aboutAppScreenTitle,
                       route: '/aboutus',
                       icon: Icons.people),
-                  RateUs(),
+                  const RateUs(),
                 ],
               ),
             ],
@@ -109,6 +109,8 @@ class CommonDrawer extends StatelessWidget {
 }
 
 class RateUs extends StatelessWidget {
+  const RateUs({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -122,12 +124,12 @@ class RateUs extends StatelessWidget {
                   Icons.star,
                   color: Theme.of(context).iconTheme.color,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Text(
                   "Rate Us",
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
@@ -143,8 +145,7 @@ class RateUs extends StatelessWidget {
             color: Theme.of(context).iconTheme.color,
           ),
           onPressed: () {
-            Share.share('Check out this Lane' 's Lexicon App : ' +
-                lanesLexiconAndroidUri.toString());
+            Share.share('Check out this Lanes Lexicon App : $lanesLexiconAndroidUri');
           },
         ),
       ],
@@ -157,26 +158,27 @@ class DrawerItem extends StatelessWidget {
   final String title;
   final String route;
   final IconData icon;
-  DrawerItem({
+  const DrawerItem({Key? key, 
     required this.currentScreen,
     required this.title,
     required this.route,
     required this.icon,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
         if (currentScreen != title) {
-          if (currentScreen == SEARCH_SCREEN_TITLE) {
+          if (currentScreen == searchScreenTitle) {
             Navigator.pop(context);
             Navigator.pushNamed(context, route);
           } else {
             Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
           }
-        } else
+        } else {
           Navigator.pop(context);
+        }
       },
       child: Row(
         children: [
@@ -184,12 +186,12 @@ class DrawerItem extends StatelessWidget {
             icon,
             color: Theme.of(context).iconTheme.color,
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           )
         ],
       ),
@@ -198,6 +200,8 @@ class DrawerItem extends StatelessWidget {
 }
 
 class VerbForms extends StatelessWidget {
+  const VerbForms({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -210,43 +214,39 @@ class VerbForms extends StatelessWidget {
               title: Center(
                   child: Text(
                 'VERB FORMS',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               )),
               titlePadding: const EdgeInsets.all(8.0),
               contentPadding: const EdgeInsets.all(0.0),
-              content: Container(
+              content: SizedBox(
                 height: MediaQuery.of(context).size.height * .7,
                 width: MediaQuery.of(context).size.width * .9,
                 child: ListView.builder(
-                  itemCount: VERB_FORMS.length,
+                  itemCount: verbForms.length,
                   itemBuilder: (_, i) {
                     return ExpansionTile(
-                      iconColor: Theme.of(context).textTheme.bodyText2!.color,
-                      textColor: Theme.of(context).textTheme.bodyText2!.color,
-                      childrenPadding: EdgeInsets.fromLTRB(30, 0, 16, 0),
+                      iconColor: Theme.of(context).textTheme.bodyMedium!.color,
+                      textColor: Theme.of(context).textTheme.bodyMedium!.color,
+                      childrenPadding: const EdgeInsets.fromLTRB(30, 0, 16, 0),
                       title: Text(
-                        VERB_FORMS[i],
+                        verbForms[i],
                         style: TextStyle(
                           fontFamily:
-                              Theme.of(context).textTheme.bodyText1!.fontFamily,
+                              Theme.of(context).textTheme.bodyLarge!.fontFamily,
                           fontSize:
-                              Theme.of(context).textTheme.bodyText1!.fontSize,
+                              Theme.of(context).textTheme.bodyLarge!.fontSize,
                         ),
                       ),
                       expandedCrossAxisAlignment: CrossAxisAlignment.start,
                       expandedAlignment: Alignment.topLeft,
                       children: [
-                        Container(
-                          child: Text(
-                            'Pattern Meaning : ' + VERB_FORM_DESCRIPTIONS[i],
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
+                        Text(
+                          'Pattern Meaning : ${verbFormDesc[i]}',
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        Container(
-                          child: Text(
-                            'Eg. : ' + VERB_FORM_EXAMPLES[i],
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
+                        Text(
+                          'Eg. : ${verbFormExample[i]}',
+                          style: Theme.of(context).textTheme.bodyLarge,
                         )
                       ],
                     );
@@ -255,11 +255,11 @@ class VerbForms extends StatelessWidget {
               ),
               actions: [
                 TextButton(
+                  onPressed: Navigator.of(context).pop,
                   child: Text(
                     'DISMISS',
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  onPressed: Navigator.of(context).pop,
                 ),
               ],
             );
@@ -272,12 +272,12 @@ class VerbForms extends StatelessWidget {
             Icons.info,
             color: Theme.of(context).iconTheme.color,
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Text(
             'Verb Forms',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           )
         ],
       ),

@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/drawer.dart';
-import '../constants/appConstants.dart';
+import '../constants/app_constants.dart';
 
 class AboutApp extends StatefulWidget {
+  const AboutApp({Key? key}) : super(key: key);
+
   @override
-  _AboutAppState createState() => _AboutAppState();
+  State<AboutApp> createState() => _AboutAppState();
 }
 
 class _AboutAppState extends State<AboutApp> {
@@ -18,88 +20,88 @@ class _AboutAppState extends State<AboutApp> {
       appBar: AppBar(
         toolbarHeight: 56,
         title: Text(
-          ABOUT_APP_SCREEN_TITLE,
-          style: Theme.of(context).textTheme.headline6,
+          aboutAppScreenTitle,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         iconTheme: Theme.of(context).iconTheme,
       ),
-      drawer: CommonDrawer(currentScreen: ABOUT_APP_SCREEN_TITLE),
+      drawer: const CommonDrawer(currentScreen: aboutAppScreenTitle),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 100),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  DISCLAIMER,
-                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                  disclaimer,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  ABOUT_APP,
-                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                  aboutApp,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  WHATS_NEW,
-                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                  whatsNew,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  COURTSEY,
-                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                  courtsey,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  CONTACT_ME,
-                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                  contactMe,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!,
                 ),
                 GestureDetector(
                   child: Text(
-                    EMAIL,
+                    email,
                     style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                   onTap: () {
                     Clipboard.setData(
-                      ClipboardData(text: EMAIL),
+                      const ClipboardData(text: email),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text("Email Copied"),
                       ),
                     );
                   },
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
                 HtmlWidget(
-                  SOCIAL_PROFILES,
-                  textStyle: Theme.of(context).textTheme.bodyText1!,
+                  socialProfiles,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      child: Image(
+                      child: const Image(
                         image: AssetImage('assets/GitHub.png'),
                       ),
                       onTap: () {
@@ -107,9 +109,9 @@ class _AboutAppState extends State<AboutApp> {
                             mode: LaunchMode.externalApplication);
                       },
                     ),
-                    Padding(padding: EdgeInsets.all(16)),
+                    const Padding(padding: EdgeInsets.all(16)),
                     GestureDetector(
-                      child: Image(
+                      child: const Image(
                         image: AssetImage('assets/linkedin.png'),
                       ),
                       onTap: () {
@@ -117,9 +119,9 @@ class _AboutAppState extends State<AboutApp> {
                             mode: LaunchMode.externalApplication);
                       },
                     ),
-                    Padding(padding: EdgeInsets.all(16)),
+                    const Padding(padding: EdgeInsets.all(16)),
                     GestureDetector(
-                      child: Image(
+                      child: const Image(
                         image: AssetImage('assets/website.png'),
                       ),
                       onTap: () {
@@ -129,8 +131,8 @@ class _AboutAppState extends State<AboutApp> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Divider(),
                 ),
               ]),

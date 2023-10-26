@@ -1,25 +1,34 @@
-import '../classes/definitionClass.dart';
-import 'package:sqflite/sqflite.dart';
+import '../classes/definition_provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
-import '../constants/appConstants.dart';
+import '../constants/app_constants.dart';
 
 class DatabaseAccess {
+  static const String _newDBName = "lanelexiconV4.db";
+  static const String _oldDBName = "lanelexiconV3.db";
+
   Future<Database> openDatabaseConnection() async {
-    // Sqflite.devSetDebugModeOn(true);
-    var path = join(await getDatabasesPath(), "lanelexiconV4.db");
+    var path = "";
+    if (Platform.isWindows || Platform.isLinux) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+      path = normalize(absolute(
+          join('.dart_tool', 'sqflite_common_ffi', 'databases', _newDBName)));
+    }
+    path = join(await getDatabasesPath(), _newDBName);
     var exists = await databaseExists(path);
 
     if (!exists) {
       try {
         await Directory(dirname(path)).create(recursive: true);
       } catch (_) {}
-      ByteData data = await rootBundle.load(join("assets", "lanelexiconV4.db"));
+      ByteData data = await rootBundle.load(join("assets", _newDBName));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes, flush: true);
-      var oldPath = join(await getDatabasesPath(), "lanelexiconV3.db");
+      var oldPath = join(await getDatabasesPath(), _oldDBName);
       exists = await databaseExists(oldPath);
       if (exists) {
         databaseFactory.deleteDatabase(oldPath);
@@ -35,21 +44,19 @@ class DatabaseAccess {
     List<Map> mapOfWords =
         await db.rawQuery('SELECT WORD FROM DICTIONARY WHERE IS_ROOT = 1');
 
-    mapOfWords.forEach(
-      (wordMap) {
-        wordMap.forEach(
-          (key, word) {
-            allDictionaryWords.add(
-              word,
-            );
-          },
-        );
-      },
-    );
+    for (var wordMap in mapOfWords) {
+      wordMap.forEach(
+        (key, word) {
+          allDictionaryWords.add(
+            word,
+          );
+        },
+      );
+    }
     return allDictionaryWords;
   }
 
-  Future<DefinitionClass> definition(String? word, String? type) async {
+  Future<DefinitionProvider> definition(String? word, String? type) async {
     Database db = await databaseConnection;
     late String query;
     switch (type) {
@@ -70,7 +77,7 @@ class DatabaseAccess {
     }
 
     List<Map<String, dynamic>> definition = await db.rawQuery(query);
-    DefinitionClass allDefinitions = DefinitionClass(
+    DefinitionProvider allDefinitions = DefinitionProvider(
       id: [],
       word: [],
       definition: [],
@@ -80,7 +87,7 @@ class DatabaseAccess {
       favoriteFlag: [],
     );
 
-    definition.forEach((element) {
+    for (var element in definition) {
       element.forEach((key, value) {
         if (key == 'id') {
           allDefinitions.id.add(value);
@@ -98,7 +105,7 @@ class DatabaseAccess {
           allDefinitions.favoriteFlag.add(value);
         }
       });
-    });
+    }
     return allDefinitions;
   }
 
@@ -110,11 +117,11 @@ class DatabaseAccess {
     List<Map<String, dynamic>> definition = await db.rawQuery(query);
     List<String> allWords = [];
 
-    definition.forEach((element) {
+    for (var element in definition) {
       element.forEach((key, value) {
         allWords.add(value);
       });
-    });
+    }
     return allWords;
   }
 
@@ -138,11 +145,11 @@ class DatabaseAccess {
     List<Map<String, dynamic>> definition = await db.rawQuery(query);
     List<String> allWords = [];
 
-    definition.forEach((element) {
+    for (var element in definition) {
       element.forEach((key, value) {
         allWords.add(value);
       });
-    });
+    }
     return allWords;
   }
 

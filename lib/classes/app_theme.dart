@@ -1,40 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../serviceLocator.dart';
-import '../services/LocalStorageService.dart';
+import '../service_locator.dart';
+import '../services/local_storage_service.dart';
 
 ThemeData lightTheme = ThemeData.light().copyWith(
   textTheme: ThemeData.light().textTheme.copyWith(
-        bodyText1: TextStyle(
+        bodyLarge: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.black,
         ),
-        bodyText2: TextStyle(
+        bodyMedium: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color:
               hexToColor(locator<LocalStorageService>().highlightTextColor) ??
                   Colors.blue,
         ),
-        subtitle1: TextStyle(
+        titleMedium: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.black,
         ),
-        subtitle2: TextStyle(
+        titleSmall: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.white,
         ),
-        headline6: TextStyle(
+        titleLarge: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 20 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.black,
         ),
       ),
   primaryColor: hexToColor(locator<LocalStorageService>().highlightTextColor),
-  // accentColor: hexToColor(locator<LocalStorageService>().highlightTextColor),
   canvasColor: hexToColor(locator<LocalStorageService>().backgroundColor),
   scaffoldBackgroundColor:
       hexToColor(locator<LocalStorageService>().backgroundColor) ??
@@ -49,41 +48,40 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   ),
   brightness: Brightness.light,
   cardColor: hexToColor(locator<LocalStorageService>().searchBarColor),
-  iconTheme: IconThemeData(color: Colors.black),
+  iconTheme: const IconThemeData(color: Colors.black),
 );
 
 ThemeData darkTheme = ThemeData.dark().copyWith(
   textTheme: ThemeData.dark().textTheme.copyWith(
-        bodyText1: TextStyle(
+        bodyLarge: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.white,
         ),
-        bodyText2: TextStyle(
+        bodyMedium: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color:
               hexToColor(locator<LocalStorageService>().highlightTextColor) ??
                   Colors.cyan,
         ),
-        subtitle1: TextStyle(
+        titleMedium: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.white,
         ),
-        subtitle2: TextStyle(
+        titleSmall: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 16 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.black,
         ),
-        headline6: TextStyle(
+        titleLarge: TextStyle(
           fontFamily: locator<LocalStorageService>().font,
           fontSize: 20 + locator<LocalStorageService>().fontSizeDelta,
           color: Colors.white,
         ),
       ),
   primaryColor: hexToColor(locator<LocalStorageService>().highlightTextColor),
-  // accentColor: hexToColor(locator<LocalStorageService>().highlightTextColor),
   canvasColor: hexToColor(locator<LocalStorageService>().backgroundColor),
   dialogBackgroundColor:
       hexToColor(locator<LocalStorageService>().backgroundColor) ??
@@ -98,7 +96,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   cardColor: hexToColor(locator<LocalStorageService>().searchBarColor),
   brightness: Brightness.dark,
-  iconTheme: IconThemeData(color: Colors.white),
+  iconTheme: const IconThemeData(color: Colors.white),
 );
 
 Color? hexToColor(String? code) {

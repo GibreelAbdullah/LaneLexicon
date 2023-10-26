@@ -1,32 +1,32 @@
 import 'package:flutter/widgets.dart';
 import '../screens/history.dart';
 import './screens/favorites.dart';
-import './screens/moreApps.dart';
-import 'constants/appConstants.dart';
+import 'screens/more_apps.dart';
+import 'constants/app_constants.dart';
 import './screens/abbreviations.dart';
-import './screens/aboutApp.dart';
+import 'screens/about_app.dart';
 import './screens/browse.dart';
 import './screens/search.dart';
 import './screens/settings.dart';
 import './screens/donate.dart';
 
 Map<String, WidgetBuilder> routes = {
-  '/search': (context) => Search(),
-  '/aboutus': (context) => AboutApp(),
-  '/browse': (context) => Browse(),
-  '/lexicologicalterms': (context) => Abbreviations(
-        title: LEXICOLOGICAL_SCREEN_TITLE,
-        abbreviations: LEXICOLOGICAL_TERMS,
-        fullForms: LEXICOLOGICAL_FULL_FORMS,
+  '/search': (context) => const Search(),
+  '/aboutus': (context) => const AboutApp(),
+  '/browse': (context) => const Browse(),
+  '/lexicologicalterms': (context) => const Abbreviations(
+        title: lexicologicalScreenTitle,
+        abbreviations: lexicologicalTerms,
+        fullForms: lexicologicalFullForms,
       ),
-  '/authorities': (context) => Abbreviations(
-        title: AUTHORITIES_SCREEN_TITLE,
-        abbreviations: AUTHORITIES_SHORT_FORMS,
-        fullForms: AUTHORITIES_FULL_FORMS,
+  '/authorities': (context) => const Abbreviations(
+        title: authoritiesScreenTitle,
+        abbreviations: authoritiesShortForm,
+        fullForms: authoritiesFullForm,
       ),
-  '/moreapps': (context) => MoreApps(),
-  '/donate': (context) => Donate(),
-  '/settings': (context) => Settings(),
-  '/favorites': (context) => Favorites(),
-  '/history': (context) => History(),
+  '/moreapps': (context) => const MoreApps(),
+  '/donate': (context) => const Donate(),
+  '/settings': (context) => const Settings(),
+  '/favorites': (context) => const Favorites(),
+  '/history': (context) => const History(),
 };

@@ -30,11 +30,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
    }
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
-
-
-
     kotlinOptions {
         jvmTarget = '1.8'
     }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../constants/appConstants.dart';
+import '../constants/app_constants.dart';
 
 quranOccurrenceDialog(
     BuildContext context, int quranOccurrences, String word) async {
@@ -12,7 +12,7 @@ quranOccurrenceDialog(
         title: Center(
           child: Text(
             '$word appears $quranOccurrences times in the Qur\'an',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         // titlePadding: const EdgeInsets.all(16.0),
@@ -20,7 +20,7 @@ quranOccurrenceDialog(
         insetPadding: const EdgeInsets.all(0),
         content: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Container(
+          child: SizedBox(
             height: MediaQuery.of(context).size.height * .7,
             width: MediaQuery.of(context).size.width * .9,
             child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -49,29 +49,29 @@ quranOccurrenceDialog(
                                   : Theme.of(context)
                                       .primaryColor
                                       .withAlpha(20),
-                              borderRadius: BorderRadius.all(
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(10),
                               ),
                             ),
                             child: ListTile(
                               onTap: () async {
                                 if (await canLaunchUrl(uriScheme)) {
-                                  print(uriScheme);
                                   await launchUrl(uriScheme,
                                       mode: LaunchMode.externalApplication);
-                                } else
+                                } else {
                                   await launchUrl(quranComUri,
                                       mode: LaunchMode.externalApplication);
+                                }
                               },
                               leading: Text(
                                 '${j + 1} ',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText1!
+                                    .bodyLarge!
                                     .copyWith(
                                         color: Theme.of(context)
                                             .textTheme
-                                            .bodyText1!
+                                            .bodyLarge!
                                             .color!
                                             .withAlpha(100)),
                               ),
@@ -79,7 +79,7 @@ quranOccurrenceDialog(
                                 "Qur'an ${snapshot.data![j]['SURAH']}:${snapshot.data![j]['AYAH']}/${snapshot.data![j]['POSITION']}",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText1!
+                                    .bodyLarge!
                                     .copyWith(
                                       color: Theme.of(context).primaryColor,
                                     ),
@@ -88,7 +88,7 @@ quranOccurrenceDialog(
                           );
                         });
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
@@ -97,11 +97,11 @@ quranOccurrenceDialog(
         ),
         actions: [
           TextButton(
+            onPressed: Navigator.of(context).pop,
             child: Text(
               'DISMISS',
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            onPressed: Navigator.of(context).pop,
           ),
         ],
       );

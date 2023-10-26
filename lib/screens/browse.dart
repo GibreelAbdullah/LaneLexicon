@@ -2,48 +2,51 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import '../classes/definitionClass.dart';
+import '../classes/definition_provider.dart';
 import '../widgets/drawer.dart';
-import '../constants/appConstants.dart';
+import '../constants/app_constants.dart';
+import '../widgets/quran_occurrence_alert.dart';
 
 class Browse extends StatefulWidget {
+  const Browse({Key? key}) : super(key: key);
+
   @override
-  _BrowseState createState() => _BrowseState();
+  State<Browse> createState() => _BrowseState();
 }
 
 class _BrowseState extends State<Browse> {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
         toolbarHeight: 56,
         title: Text(
-          BROWSE_SCREEN_TITLE,
-          style: Theme.of(context).textTheme.headline6,
+          browseScreenTitle,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         iconTheme: Theme.of(context).iconTheme,
       ),
-      drawer: CommonDrawer(currentScreen: BROWSE_SCREEN_TITLE),
+      drawer: const CommonDrawer(currentScreen: browseScreenTitle),
       body: buildFirstLevelAlphabets(),
     );
   }
 
   ListView buildFirstLevelAlphabets() {
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
-      itemCount: ALL_ALPHABETS.length,
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 100),
+      itemCount: allAlphabets.length,
       itemBuilder: (context, i) {
         return ExpansionTile(
-          collapsedIconColor: Theme.of(context).textTheme.bodyText1!.color,
-          collapsedTextColor: Theme.of(context).textTheme.bodyText1!.color,
-          iconColor: Theme.of(context).textTheme.bodyText2!.color,
-          textColor: Theme.of(context).textTheme.bodyText2!.color,
+          collapsedIconColor: Theme.of(context).textTheme.bodyLarge!.color,
+          collapsedTextColor: Theme.of(context).textTheme.bodyLarge!.color,
+          iconColor: Theme.of(context).textTheme.bodyMedium!.color,
+          textColor: Theme.of(context).textTheme.bodyMedium!.color,
           title: Text(
-            ALL_ALPHABETS[i],
+            allAlphabets[i],
             style: TextStyle(
-              fontFamily: Theme.of(context).textTheme.bodyText1!.fontFamily,
-              fontSize: Theme.of(context).textTheme.bodyText1!.fontSize,
+              fontFamily: Theme.of(context).textTheme.bodyLarge!.fontFamily,
+              fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
             ),
           ),
           children: [buildSecondLevelAlphabets(i)],
@@ -54,31 +57,31 @@ class _BrowseState extends State<Browse> {
 
   FutureBuilder<List<String?>> buildSecondLevelAlphabets(int i) {
     return FutureBuilder<List<String?>>(
-      future: databaseObject.allXLevelWords(ALL_ALPHABETS[i], 2),
+      future: databaseObject.allXLevelWords(allAlphabets[i], 2),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
             child: Text(
               'Loading...',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           );
         } else {
           return ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: snapshot.data!.length,
               itemBuilder: (context, j) {
                 return ExpansionTile(
-                  iconColor: Theme.of(context).textTheme.bodyText2!.color,
-                  textColor: Theme.of(context).textTheme.bodyText2!.color,
-                  tilePadding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                  iconColor: Theme.of(context).textTheme.bodyMedium!.color,
+                  textColor: Theme.of(context).textTheme.bodyMedium!.color,
+                  tilePadding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
                   title: Text(
                     snapshot.data![j]!,
                     style: TextStyle(
                       fontFamily:
-                          Theme.of(context).textTheme.bodyText1!.fontFamily,
-                      fontSize: Theme.of(context).textTheme.bodyText1!.fontSize,
+                          Theme.of(context).textTheme.bodyLarge!.fontFamily,
+                      fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
                     ),
                   ),
                   children: [buildRootWords(snapshot, j)],
@@ -96,7 +99,7 @@ class _BrowseState extends State<Browse> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, j) {
@@ -109,7 +112,7 @@ class _BrowseState extends State<Browse> {
                       ),
                       title: Text(
                         snapshot.data![j]!,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       onTap: () {
                         buildDefinitionAlert(context, snapshot.data![j]);
@@ -118,7 +121,7 @@ class _BrowseState extends State<Browse> {
                   );
                 });
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -126,39 +129,34 @@ class _BrowseState extends State<Browse> {
   }
 }
 
+// buildDefinitionDialog(BuildContext context, String? word) {
+//   FutureBuilder<DefinitionClass>(
+//       future: databaseObject.definition(word, "BrowseScreen"),
+//       builder: (context, snapshot) {});
+// }
+
 Future buildDefinitionAlert(BuildContext context, String? word) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        insetPadding: EdgeInsets.all(0),
-        contentPadding: EdgeInsets.all(0),
-        title: Center(
-          child: Text(
-            word!,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        ),
-        content: Container(
-          height: MediaQuery.of(context).size.height * .7,
-          width: MediaQuery.of(context).size.width * .9,
-          child: FutureBuilder<DefinitionClass>(
-            future: databaseObject.definition(word, "BrowseScreen"),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: Container(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator()),
-                );
-              } else if (snapshot.hasError) {
-                return Text(
-                  "Error",
-                  style: Theme.of(context).textTheme.bodyText1,
-                );
-              } else {
-                return ListView.builder(
+      return FutureBuilder<DefinitionProvider>(
+        future: databaseObject.definition(word, "BrowseScreen"),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return AlertDialog(
+              actionsAlignment: MainAxisAlignment.spaceBetween,
+              insetPadding: const EdgeInsets.all(0),
+              contentPadding: const EdgeInsets.all(15),
+              title: Center(
+                child: Text(
+                  word!,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+              content: SizedBox(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .9,
+                child: ListView.builder(
                   itemCount: snapshot.data!.definition.length,
                   itemBuilder: (context, index) {
                     return ListTile(
@@ -169,26 +167,40 @@ Future buildDefinitionAlert(BuildContext context, String? word) {
                           0),
                       title: HtmlWidget(
                         snapshot.data!.definition[index]!,
-                        textStyle: Theme.of(context).textTheme.bodyText1!,
+                        textStyle: Theme.of(context).textTheme.bodyLarge!,
                       ),
                     );
                   },
-                );
-              }
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: Text(
-              'DISMISS',
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+                ),
+              ),
+              actions: [
+                snapshot.data!.quranOccurrence![0] != null
+                    ? TextButton(
+                        child: Text(
+                          'Q - ${snapshot.data!.quranOccurrence![0]}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        onPressed: () {
+                          quranOccurrenceDialog(context,
+                              snapshot.data!.quranOccurrence![0]!, word);
+                        },
+                      )
+                    : Container(),
+                TextButton(
+                  child: Text(
+                    'DISMISS',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        },
       );
     },
   );

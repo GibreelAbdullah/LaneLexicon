@@ -1,29 +1,31 @@
 import 'dart:core';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import '../services/getData.dart';
+import '../services/get_data.dart';
 
-const String SETTINGS_SCREEN_TITLE = 'Settings';
-const String ABOUT_APP_SCREEN_TITLE = 'About App';
-const String LEXICOLOGICAL_SCREEN_TITLE = 'Lexicological and Grammatical Terms';
-const String LEXICOLOGICAL_SCREEN_TITLE_SHORT = 'Lexical Terms';
-const String AUTHORITIES_SCREEN_TITLE = 'Indications of Authorities';
-const String AUTHORITIES_SCREEN_TITLE_SHORT = 'Authorities';
-const String ABBREVIATIONS_SCREEN_TITLE = 'Abbreviations';
-const String SEARCH_SCREEN_TITLE = 'Search';
-const String BROWSE_SCREEN_TITLE = 'Browse';
-const String NOTIFICATION_SCREEN_TITLE = 'Notifications';
-const String DONATE_SCREEN_TITLE = 'Donate';
-const String FAVORITES_SCREEN_TITLE = 'Favorites';
-const String HISTORY_SCREEN_TITLE = 'History';
-const String MORE_APPS = 'More Apps';
-const String ALL_MY_APPS = 'All Apps By Me';
+const String lexicologicalScreenTitle = 'Lexicological and Grammatical Terms';
+const String lexicologicalScreenTitleShort = 'Lexical Terms';
+const String authoritiesScreenTitle = 'Indications of Authorities';
+const String authoritiesScreenTitleShort = 'Authorities';
+const String settingsScreenTitle = 'Settings';
+const String aboutAppScreenTitle = 'About App';
+const String prefaceScreenTitle = 'Preface & Intro';
+const String abbreviationsScreenTitle = 'Abbreviations';
+const String searchScreenTitle = 'Search';
+const String browseScreenTitle = 'Browse';
+const String notificationScreenTitle = 'Notifications';
+const String donateScreenTitle = 'Donate';
+const String favoritesScreenTitle = 'Favorites';
+const String historyScreenTitle = 'History';
+const String moreApps = 'More Apps';
+const String allMyApps = 'All Apps By Me';
 
-const String FAV_IMAGE = 'assets/like_button.jpg';
-const String DONATE_IMAGE = 'assets/donate.jpg';
-const String QURANLE_IMAGE = 'assets/Quranle.jpg';
-const String FOR_HIRE_IMAGE = 'assets/ForHire.webp';
-const String QURAN_IMAGE = 'assets/quran.jpg';
+const String favImage = 'assets/like_button.jpg';
+const String donateImage = 'assets/donate.jpg';
+const String quranleImage = 'assets/Quranle.jpg';
+const String forHireImage = 'assets/ForHire.webp';
+const String quranImage = 'assets/quran.jpg';
+const String hadithhubImage = 'assets/HadithHub.png';
 
 final Uri quranleUri = Uri(
   scheme: "https",
@@ -35,6 +37,11 @@ final Uri portfolioUri = Uri(
   scheme: "https",
   host: "gibreelabdullah.github.io",
   queryParameters: {'ref': 'LaneLexicon'},
+);
+
+final Uri hadithHubUri = Uri(
+  scheme: "https",
+  host: "hadithhub.com",
 );
 
 final Uri hansWehrAndroidUri = Uri(
@@ -74,43 +81,43 @@ final Uri donateUri = Uri(
   host: 'donate.islamic-relief.org',
 );
 
-const String ABOUT_APP = '''
+const String aboutApp = '''
     <br>
     <p style="text-align:center"><i><b>Lanes's Lexicon or Arabic-English Lexicon</b></i> is an Arabic-English dictionary compiled by 
     <a href="https://en.wikipedia.org/wiki/Edward_William_Lane" title="Edward William Lane">Edward William Lane</a>.<br>''';
-const String WHATS_NEW =
-    '''<p style="text-align:center"><b> What's New :</b><br>
+const String whatsNew = '''<p style="text-align:center"><b> What's New :</b><br>
     - Quranic Words<br>
     - Design improvements<br>
-    <a href = "https://github.com/MuslimTechNet/LaneLexicon">Source Code, Full Release Notes and Future Work</a></p><br>''';
-const String COMMUNITY_INVITE =
+    <a href = "https://github.com/GibreelAbdullah/LaneLexicon">Source Code, Full Release Notes and Future Work</a></p><br>''';
+const String communityInvite =
     '''<p style="text-align:center">If you are a Muslim tech professional or aspiring to be one join the <br>
     <b>Muslim Tech Network</b></p><br>''';
 
-const String DISCLAIMER =
+const String disclaimer =
     '''<p style="text-align:center"><b>DISCLAIMER - Not 100% Accurate.</b></br>
-    Text was extracted from scanned pages and may have errors.</p>''';
+    Text was extracted from scanned pages and has many errors which unfortunately is not possible for me to fix manually.</br>
+    Try <a href="https://arabicstudentsdictionary.com/">Arabic Students Dictionary</a> which has most of these errors corrected.</p>''';
 
-const String CONTACT_ME =
+const String contactMe =
     '<p style="text-align:center"><b>CONTACT ME</b><br><br>';
 
-const String EMAIL = "gibreel.khan@gmail.com";
+const String email = "gibreel.khan@gmail.com";
 
-const String SOCIAL_PROFILES =
+const String socialProfiles =
     '<p style="text-align:center"><b>SOCAIL PROFILES</b><br><br>';
 
-const String COURTSEY = '''<p style="text-align:center"><b>COURTSEY</b>
+const String courtsey = '''<p style="text-align:center"><b>COURTSEY</b>
     <ul>
       <li><a href="http://www.perseus.tufts.edu/hopper/">Perseus Digital Library</a> for the digitisation of Lane's Lexicon.
       <li><a href="https://github.com/laneslexicon/LexiconDatabase">Graeme Andrews</a> for providing Perseus' work in database form</li>
       <li><a href="https://corpus.quran.com/">Quran.com</a> for their word-by-word breakdown of Quranic text</li>
     </ul>
     </p><br>''';
-final DatabaseAccess databaseObject = new DatabaseAccess();
+final DatabaseAccess databaseObject = DatabaseAccess();
 final Future<Database> databaseConnection =
     DatabaseAccess().openDatabaseConnection();
 
-const List<String> VERB_FORMS = [
+const List<String> verbForms = [
   'I - فَعَل/فَعُل/فَعِل',
   'II - فَعّل',
   'III - فَاعَل',
@@ -121,9 +128,11 @@ const List<String> VERB_FORMS = [
   'VIII - اِفْتَعَل',
   'IX - اِفْعَل',
   'X - اِسْتَفْعَل',
+  'XI - اِفْعالَّ',
+  'XII - اِفْعَوْعَلَ',
 ];
 
-const List<String> VERB_FORM_DESCRIPTIONS = [
+const List<String> verbFormDesc = [
   'Basic root',
   'Doing something intensively/ repeatedly, doing or causing something to someone else',
   'To try to do something, to do something with someone else',
@@ -134,22 +143,26 @@ const List<String> VERB_FORM_DESCRIPTIONS = [
   'No consistent meaning pattern, being in a state of something ',
   'Used for colors or defects',
   'To seek or ask something, wanting, trying',
+  'Like Form IX used for colors or defects but more temporary or intense',
+  'Like Form XI tend to refer to a colour or physical quality'
 ];
 
-const List<String> VERB_FORM_EXAMPLES = [
-  'غفر - He forgave',
+const List<String> verbFormExample = [
+  'ضَرَبَ - He hit\n       غفر - He forgave',
   'علّم - He taught',
   'قاتل - He fought',
-  'اخرج - He took out',
-  'توكّل - He trusted',
-  'تعاون - He cooperated',
-  'اِنْفَقلب - He overturned',
-  'اِختلف - He differed',
+  'اكْرَمَ - He honored\n       اخرج - He took out',
+  'تَمَتَّعَ - He enjoyed\n       توكّل - He trusted',
+  'تَبادَلَ - He exchanged\n       تعاون - He cooperated',
+  'اِنكَسَرَ - He broke\n       اِنْقلب - He overturned',
+  'اِجتَنَبَ - He avoided\n       اِختلف - He differed',
   'اِحمرّ - He became red',
   'اِسْتَغفر - He sought forgiveness',
+  'اِحْمارَّ - He became temporarily or extremely red',
+  'اِخْشَوْشَنَ - He became rough, coarse',
 ];
 
-const List<String> ALL_ALPHABETS = [
+const List<String> allAlphabets = [
   "ا",
   "ب",
   "ت",
@@ -180,7 +193,7 @@ const List<String> ALL_ALPHABETS = [
   "ي"
 ];
 
-const List<String> LEXICOLOGICAL_TERMS = [
+const List<String> lexicologicalTerms = [
   'A',
   'Accord.',
   'Accus. case',
@@ -313,7 +326,7 @@ const List<String> LEXICOLOGICAL_TERMS = [
   '',
   '',
 ];
-const List<String> LEXICOLOGICAL_FULL_FORMS = [
+const List<String> lexicologicalFullForms = [
   '',
   'according',
   'accusative case, نَصْبٌ.',
@@ -446,7 +459,7 @@ const List<String> LEXICOLOGICAL_FULL_FORMS = [
   '‡‡ means asserted to be doubly tropical.',
   '† means supposed by me to tropical. ',
 ];
-const List<String> AUTHORITIES_SHORT_FORMS = [
+const List<String> authoritiesShortForm = [
   'A',
   '†A',
   'AA',
@@ -584,7 +597,7 @@ const List<String> AUTHORITIES_SHORT_FORMS = [
   '',
 ];
 
-const List<String> AUTHORITIES_FULL_FORMS = [
+const List<String> authoritiesFullForm = [
   '',
   'The "Asás" of Ez-Zamakhsheree',
   'Aboo-\'Amr Ibn-El-\'Alà, and Aboo-\'AMr Esh-Sheybáee: each being cited simply by the name of "Aboo-\'Amr."',

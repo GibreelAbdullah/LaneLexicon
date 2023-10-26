@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/LocalStorageService.dart';
-import '../constants/appConstants.dart';
-import '../serviceLocator.dart';
+import '../services/local_storage_service.dart';
+import '../constants/app_constants.dart';
+import '../service_locator.dart';
 
-class SearchModel extends ChangeNotifier {
+class SearchSuggestionsProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
