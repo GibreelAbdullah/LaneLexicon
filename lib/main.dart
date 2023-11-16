@@ -4,7 +4,7 @@ import 'classes/definition_provider.dart';
 import 'classes/search_suggestions_provider.dart';
 import 'classes/theme_model.dart';
 import 'service_locator.dart';
-import 'services/app_review.dart';
+// import 'services/app_review.dart';
 import './routes.dart';
 
 void main() async {
@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    appReview();
+    // appReview();
     // checkDatabaseUpdates();
   }
 
