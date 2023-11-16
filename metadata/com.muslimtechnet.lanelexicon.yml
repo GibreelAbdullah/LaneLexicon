@@ -1,0 +1,42 @@
+Categories:
+  - Science & Education
+License: CC BY-SA 3.0 US Deed
+SourceCode: https://github.com/GibreelAbdullah/LaneLexicon
+IssueTracker: https://github.com/GibreelAbdullah/LaneLexicon/issues
+
+Name: Lane's Lexicon
+Description: |-
+  <b>Lane's Lexicon</b> is an Arabic-English dictionary compiled by Edward William Lane (17 September 1801 - 10 August 1876)
+
+RepoType: git
+Repo: https://github.com/GibreelAbdullah/LaneLexicon.git
+
+Builds:
+  - versionName: 2.4.2
+    versionCode: 19
+    commit: 7d605c3459cb5ad4dbaf76250b87be0cbad61c7a
+    output: build/app/outputs/apk/release/app-release-unsigned.apk
+    srclibs:
+      - flutter@3.13.7
+    rm:
+      - ios
+      - linux
+      - macos
+      - test
+      - web
+      - windows
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter packages pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 2.4.2
+CurrentVersionCode: 19
