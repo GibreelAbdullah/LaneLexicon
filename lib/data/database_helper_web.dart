@@ -1,0 +1,26 @@
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_common/sqflite.dart';
+
+const _dbAssetUrl = 'assets/assets/lanelexicon.sqlite';
+
+Future<Database> initDatabase(int dbVersion) async {
+  const path = 'lanelexicon.sqlite';
+
+  try {
+    await deleteDatabase(path);
+  } catch (_) {}
+
+  final response = await http.get(Uri.parse(_dbAssetUrl));
+  final Uint8List bytes = response.bodyBytes;
+
+  await databaseFactory.writeDatabaseBytes(path, bytes);
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('db_version', dbVersion);
+  return openDatabase(path, readOnly: true);
+}
+
+Future<void> downloadAndReplaceDb(String url, int newVersion) async {
+  // No-op on web — DB is always fresh from deployed assets.
+}

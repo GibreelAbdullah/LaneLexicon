@@ -1,0 +1,218 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  # Strip leading 'v' → e.g. "2.3.0"
+  APP_VERSION: ""
+
+jobs:
+  # ── Android APK ──────────────────────────────────────────────
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          IFS='.' read -r major minor patch <<< "$VERSION"
+          BUILD_NUMBER=$(( major * 10000 + minor * 100 + patch ))
+          sed -i "s/^version: .*/version: ${VERSION}+${BUILD_NUMBER}/" pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: flutter pub get
+      - run: flutter build apk --release --dart-define=APP_VERSION=${GITHUB_REF_NAME#v}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # ── Linux tar.gz ─────────────────────────────────────────────
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/^version: .*/version: ${VERSION}+1/" pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+      - run: flutter pub get
+      - run: flutter build linux --release --dart-define=APP_VERSION=${GITHUB_REF_NAME#v}
+      - run: |
+          cd build/linux/x64/release/bundle
+          tar czf "$GITHUB_WORKSPACE/lanes-lexicon-linux-x64.tar.gz" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-bundle
+          path: lanes-lexicon-linux-x64.tar.gz
+
+  # ── Web (GitHub Pages) ──────────────────────────────────────
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/^version: .*/version: ${VERSION}+1/" pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: |
+          curl -L -o web/sqlite3.wasm \
+            "https://github.com/simolus3/sqlite3.dart/releases/download/sqlite3-3.3.1/sqlite3.wasm"
+      - run: flutter build web --release --base-href "/lanelexicon/" --dart-define=APP_VERSION=${GITHUB_REF_NAME#v}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web
+
+  deploy-pages:
+    needs: web
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ── Windows exe ─────────────────────────────────────────────
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set version from tag
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          (Get-Content pubspec.yaml) -replace '^version: .*', "version: ${version}+1" | Set-Content pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - name: Build Windows
+        shell: pwsh
+        run: |
+          $ver = "${{ github.ref_name }}".TrimStart('v')
+          flutter build windows --release --dart-define="APP_VERSION=$ver"
+      - run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath lanes-lexicon-windows-x64.zip
+        shell: pwsh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-zip
+          path: lanes-lexicon-windows-x64.zip
+
+  # ── macOS dmg ───────────────────────────────────────────────
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i '' "s/^version: .*/version: ${VERSION}+1/" pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter build macos --release --dart-define=APP_VERSION=${GITHUB_REF_NAME#v}
+      - run: |
+          APP_PATH="build/macos/Build/Products/Release/Arabic English Lexicon by E W Lane.app"
+          DMG_PATH="lanes-lexicon-macos.dmg"
+          hdiutil create -volname "Lane's Lexicon" \
+            -srcfolder "$APP_PATH" \
+            -ov -format UDZO "$DMG_PATH"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: lanes-lexicon-macos.dmg
+
+  # ── iOS IPA (no codesign) ───────────────────────────────────
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i '' "s/^version: .*/version: ${VERSION}+1/" pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign --dart-define=APP_VERSION=${GITHUB_REF_NAME#v}
+      - run: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r lanes-lexicon-ios.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: lanes-lexicon-ios.ipa
+
+  # ── Create GitHub Release with all artifacts ────────────────
+  release:
+    needs: [android, linux, windows, macos, ios]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - run: |
+          mv artifacts/android-apk/app-release.apk artifacts/lanes-lexicon-android.apk
+          mv artifacts/linux-bundle/lanes-lexicon-linux-x64.tar.gz artifacts/
+          mv artifacts/windows-zip/lanes-lexicon-windows-x64.zip artifacts/
+          mv artifacts/macos-dmg/lanes-lexicon-macos.dmg artifacts/
+          mv artifacts/ios-ipa/lanes-lexicon-ios.ipa artifacts/
+          cp assets/lanelexicon.sqlite artifacts/lanelexicon.sqlite
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: |
+            artifacts/lanes-lexicon-android.apk
+            artifacts/lanes-lexicon-linux-x64.tar.gz
+            artifacts/lanes-lexicon-windows-x64.zip
+            artifacts/lanes-lexicon-macos.dmg
+            artifacts/lanes-lexicon-ios.ipa
+            artifacts/lanelexicon.sqlite
+          generate_release_notes: true

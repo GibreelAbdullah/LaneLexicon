@@ -1,0 +1,181 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../providers/dictionary_providers.dart';
+import '../providers/theme_provider.dart';
+import '../widgets/constrained_body.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class SettingsScreen extends ConsumerWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchBarBottom = ref.watch(searchBarBottomProvider).value ?? false;
+    final fontScale = ref.watch(fontScaleProvider).value ?? 1.0;
+    final cs = Theme.of(context).colorScheme;
+
+    final toolbar = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              if (GoRouter.of(context).canPop()) {
+                context.pop();
+              } else {
+                context.go('/');
+              }
+            },
+          ),
+          const Expanded(
+            child: Text('Settings',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center),
+          ),
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+
+    final appFont = ref.watch(appFontProvider).value ?? AppFont.system;
+
+    final body = ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          child: SwitchListTile(
+            title: const Text('Search bar at bottom'),
+            subtitle: const Text('Move search bar to the bottom of the screen'),
+            secondary: const Icon(Icons.vertical_align_bottom),
+            value: searchBarBottom,
+            onChanged: (_) => ref.read(searchBarBottomProvider.notifier).toggle(),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.palette),
+            title: const Text('Theme'),
+            subtitle: const Text('Colors, dark mode, and advanced customization'),
+            trailing: Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
+            onTap: () => context.go('/settings/theme'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.text_fields, color: cs.onSurfaceVariant),
+                    const SizedBox(width: 12),
+                    const Expanded(child: Text('Font', style: TextStyle(fontSize: 16))),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                DropdownMenu<AppFont>(
+                  initialSelection: appFont,
+                  expandedInsets: EdgeInsets.zero,
+                  onSelected: (v) { if (v != null) ref.read(appFontProvider.notifier).set(v); },
+                  dropdownMenuEntries: AppFont.values.map((f) => DropdownMenuEntry(
+                    value: f,
+                    label: f.label,
+                    style: MenuItemButton.styleFrom(textStyle: _fontPreviewStyle(f)),
+                  )).toList(),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Preview', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+                      const SizedBox(height: 8),
+                      Text('كَتَبَ', style: TextStyle(fontSize: 18, color: cs.onSurface)),
+                      const SizedBox(height: 4),
+                      Text('كتب kataba u (katb, كتبة kitba, كتابة kitāba) to write, pen, write down, put down in writing, note down, inscribe, enter, record, book, register (هـ s.th.); ', style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.format_size, color: cs.onSurfaceVariant),
+                    const SizedBox(width: 12),
+                    const Expanded(child: Text('Font Size', style: TextStyle(fontSize: 16))),
+                    Text('${(fontScale * 100).round()}%',
+                        style: TextStyle(fontSize: 14, color: cs.primary, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Slider(
+                  value: fontScale,
+                  min: 0.7,
+                  max: 1.5,
+                  divisions: 16,
+                  label: '${(fontScale * 100).round()}%',
+                  onChanged: (v) => ref.read(fontScaleProvider.notifier).set(v),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('A', style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+                    if (fontScale != 1.0)
+                      GestureDetector(
+                        onTap: () => ref.read(fontScaleProvider.notifier).set(1.0),
+                        child: Text('Reset', style: TextStyle(fontSize: 12, color: cs.primary)),
+                      ),
+                    Text('A', style: TextStyle(fontSize: 20, color: cs.onSurfaceVariant)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+
+    return Scaffold(
+      body: SafeArea(
+        child: ConstrainedBody(
+          child: Column(
+            children: searchBarBottom
+                ? [Expanded(child: body), const Divider(height: 1), toolbar]
+                : [toolbar, const Divider(height: 1), Expanded(child: body)],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+TextStyle? _fontPreviewStyle(AppFont font) {
+  return switch (font) {
+    AppFont.system => null,
+    AppFont.notoSansArabic => GoogleFonts.notoSansArabic(),
+    AppFont.notoNaskhArabic => GoogleFonts.notoNaskhArabic(),
+    AppFont.amiri => GoogleFonts.amiri(),
+    AppFont.cairo => GoogleFonts.cairo(),
+    AppFont.ibmPlexSansArabic => GoogleFonts.ibmPlexSansArabic(),
+  };
+}
