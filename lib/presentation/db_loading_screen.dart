@@ -13,6 +13,7 @@ class DbLoadingScreen extends StatefulWidget {
 
 class _DbLoadingScreenState extends State<DbLoadingScreen> {
   bool _ready = false;
+  bool _isDownloading = false;
   double _progress = 0.0;
   StreamSubscription<double>? _sub;
 
@@ -20,7 +21,10 @@ class _DbLoadingScreenState extends State<DbLoadingScreen> {
   void initState() {
     super.initState();
     _sub = dbDownloadProgress.stream.listen((p) {
-      if (mounted) setState(() => _progress = p);
+      if (mounted) setState(() {
+        _isDownloading = true;
+        _progress = p;
+      });
     });
     _initDb();
   }
@@ -40,6 +44,8 @@ class _DbLoadingScreenState extends State<DbLoadingScreen> {
   Widget build(BuildContext context) {
     if (_ready) return widget.child;
 
+    // Only show loading screen if actually downloading the DB
+    // Otherwise show a minimal splash while WASM initializes
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -53,14 +59,18 @@ class _DbLoadingScreenState extends State<DbLoadingScreen> {
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         )),
-                const SizedBox(height: 8),
-                const Text('Preparing dictionary for first use...'),
-                const SizedBox(height: 32),
-                LinearProgressIndicator(value: _progress > 0 ? _progress : null),
-                const SizedBox(height: 12),
-                if (_progress > 0)
-                  Text('${(_progress * 100).toStringAsFixed(0)}%',
+                const SizedBox(height: 24),
+                if (_isDownloading) ...[
+                  const Text('Downloading dictionary...'),
+                  const SizedBox(height: 24),
+                  LinearProgressIndicator(value: _progress > 0 ? _progress.clamp(0.0, 1.0) : null),
+                  const SizedBox(height: 12),
+                  Text('${(_progress.clamp(0.0, 1.0) * 100).toStringAsFixed(0)}%',
                       style: const TextStyle(fontSize: 14)),
+                ] else ...[
+                  const SizedBox(height: 16),
+                  const CircularProgressIndicator(),
+                ],
               ],
             ),
           ),
