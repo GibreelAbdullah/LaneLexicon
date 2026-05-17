@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'data/migration.dart';
 import 'data/database_init.dart' as db_init;
+import 'presentation/db_loading_screen.dart';
 import 'presentation/providers/dictionary_providers.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'presentation/router.dart';
@@ -11,7 +13,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   db_init.initDatabaseFactory();
   await migrateFromOldApp();
-  runApp(const ProviderScope(child: LaneLexiconApp()));
+  runApp(const ProviderScope(child: _AppEntry()));
+}
+
+class _AppEntry extends StatelessWidget {
+  const _AppEntry();
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return DbLoadingScreen(child: const LaneLexiconApp());
+    }
+    return const LaneLexiconApp();
+  }
 }
 
 class LaneLexiconApp extends ConsumerWidget {

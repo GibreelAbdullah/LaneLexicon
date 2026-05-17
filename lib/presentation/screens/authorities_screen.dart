@@ -70,7 +70,7 @@ class _AuthoritiesScreenState extends ConsumerState<AuthoritiesScreen> {
         : ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             itemCount: entries.length,
-            separatorBuilder: (_, __) => Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.3)),
+            separatorBuilder: (_, _) => Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.3)),
             itemBuilder: (_, i) {
               final e = entries[i];
               return Padding(
