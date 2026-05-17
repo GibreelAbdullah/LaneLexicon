@@ -5,17 +5,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common/sqflite.dart';
 
 const _dbAssetUrl = 'assets/assets/lanelexicon.sqlite';
+const _dbPath = 'lanelexicon.sqlite';
 
 /// Stream controller for reporting download progress (0.0 to 1.0).
 final dbDownloadProgress = StreamController<double>.broadcast();
 
 Future<Database> initDatabase(int dbVersion) async {
-  const path = 'lanelexicon.sqlite';
+  final prefs = await SharedPreferences.getInstance();
+  final currentVersion = prefs.getInt('db_version') ?? 0;
 
-  try {
-    await deleteDatabase(path);
-  } catch (_) {}
+  if (currentVersion >= dbVersion) {
+    // DB already cached, open directly
+    try {
+      return await openDatabase(_dbPath, readOnly: true);
+    } catch (_) {
+      // If open fails, re-download below
+    }
+  }
 
+  // Download and write the DB
   final request = http.Request('GET', Uri.parse(_dbAssetUrl));
   final response = await request.send();
   final contentLength = response.contentLength ?? 0;
@@ -31,11 +39,14 @@ Future<Database> initDatabase(int dbVersion) async {
     }
   }
 
-  await databaseFactory.writeDatabaseBytes(path, bytes.takeBytes());
-  final prefs = await SharedPreferences.getInstance();
+  try {
+    await deleteDatabase(_dbPath);
+  } catch (_) {}
+
+  await databaseFactory.writeDatabaseBytes(_dbPath, bytes.takeBytes());
   await prefs.setInt('db_version', dbVersion);
   dbDownloadProgress.add(1.0);
-  return openDatabase(path, readOnly: true);
+  return openDatabase(_dbPath, readOnly: true);
 }
 
 Future<void> downloadAndReplaceDb(String url, int newVersion) async {
