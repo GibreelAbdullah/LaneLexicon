@@ -122,14 +122,6 @@ class HomeScreen extends ConsumerWidget {
                   context.go('/settings');
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.info),
-                title: const Text('About'),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.go('/about');
-                },
-              ),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -234,38 +226,47 @@ class _Dashboard extends ConsumerWidget {
         children: [
           const DbUpdateBanner(),
           _Tile(
-            icon: Icons.favorite,
-            color: cs.error,
-            title: 'Favorites',
-            onTap: () => context.go('/favorites'),
+            icon: Icons.list,
+            color: cs.primary,
+            title: 'Browse',
+            onTap: () => context.push('/browse'),
           ),
           const SizedBox(height: 12),
           _Tile(
             icon: Icons.menu_book,
             color: cs.tertiary,
             title: 'Quranic Words',
-            onTap: () => context.go('/quranic-words'),
+            onTap: () => context.push('/quranic-words'),
           ),
           const SizedBox(height: 12),
           _Tile(
-            icon: Icons.list,
-            color: cs.primary,
-            title: 'Browse',
-            onTap: () => context.go('/browse'),
+            icon: Icons.favorite,
+            color: cs.error,
+            title: 'Favorites',
+            onTap: () => context.push('/favorites'),
           ),
           const SizedBox(height: 12),
           _Tile(
             icon: Icons.history,
             color: cs.secondary,
             title: 'History',
-            onTap: () => context.go('/history'),
+            onTap: () => context.push('/history'),
           ),
           const SizedBox(height: 12),
           _Tile(
             icon: Icons.auto_stories,
             color: cs.tertiary,
-            title: 'Read Hadith',
+            title: 'Read Hadith @ HadithHub',
+            isExternal: true,
             onTap: () => launchUrl(Uri.parse('https://www.hadithhub.com/')),
+          ),
+          const SizedBox(height: 12),
+          _Tile(
+            icon: Icons.apps,
+            color: cs.primary,
+            title: 'Other Apps by Me',
+            isExternal: true,
+            onTap: () => launchUrl(Uri.parse('https://play.google.com/store/apps/developer?id=Gibreel+Abdullah')),
           ),
           const SizedBox(height: 12),
           _Tile(
@@ -276,10 +277,10 @@ class _Dashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           _Tile(
-            icon: Icons.apps,
-            color: cs.primary,
-            title: 'Other Apps by Me',
-            onTap: () => launchUrl(Uri.parse('https://play.google.com/store/apps/developer?id=Gibreel+Abdullah')),
+            icon: Icons.info_outline,
+            color: cs.onSurfaceVariant,
+            title: 'About',
+            onTap: () => context.push('/about'),
           ),
           const SizedBox(height: 12),
           const _RemoteMessage(),
@@ -294,8 +295,9 @@ class _Tile extends StatelessWidget {
   final Color color;
   final String title;
   final VoidCallback onTap;
+  final bool isExternal;
 
-  const _Tile({required this.icon, required this.color, required this.title, required this.onTap});
+  const _Tile({required this.icon, required this.color, required this.title, required this.onTap, this.isExternal = false});
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +306,7 @@ class _Tile extends StatelessWidget {
       child: ListTile(
         leading: Icon(icon, color: color),
         title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: cs.onSurface)),
-        trailing: Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
+        trailing: Icon(isExternal ? Icons.open_in_new : Icons.chevron_right, color: cs.onSurfaceVariant),
         onTap: onTap,
       ),
     );

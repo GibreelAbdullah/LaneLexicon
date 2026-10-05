@@ -190,7 +190,7 @@ const _releaseUrl = 'https://github.com/GibreelAbdullah/LaneLexicon/releases/lat
 const _platforms = [
   (icon: Icons.android, label: 'Android', url: 'https://play.google.com/store/apps/details?id=com.muslimtechnet.lanelexicon'),
   (icon: Icons.phone_iphone, label: 'iOS', url: _releaseUrl),
-  (icon: Icons.language, label: 'Web', url: _releaseUrl),
+  (icon: Icons.language, label: 'Web', url: 'https://lanelexicon.hadithhub.com'),
   (icon: Icons.desktop_windows, label: 'Windows', url: _releaseUrl),
   (icon: Icons.desktop_mac, label: 'macOS', url: _releaseUrl),
   (icon: Icons.computer, label: 'Linux', url: _releaseUrl),
