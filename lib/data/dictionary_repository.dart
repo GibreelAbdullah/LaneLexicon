@@ -84,7 +84,7 @@ class DictionaryRepository {
     final db = await _db;
     final results = await db.rawQuery(
       'SELECT id, word, definition, is_root, parent_id, quran_occurrence, favorite_flag '
-      'FROM DICTIONARY WHERE word LIKE ? ORDER BY is_root DESC, id LIMIT 100',
+      'FROM DICTIONARY WHERE word LIKE ? ORDER BY is_root DESC, LENGTH(word), id LIMIT 100',
       ['%$query%'],
     );
     return results.map(DictionaryEntry.fromMap).toList();
@@ -95,7 +95,7 @@ class DictionaryRepository {
     final results = await db.rawQuery(
       'SELECT d.id, d.word, d.definition, d.is_root, d.parent_id, d.quran_occurrence, d.favorite_flag '
       'FROM DICTIONARY d JOIN TRANSLITERATION t ON d.id = t.id '
-      'WHERE t.transliteration LIKE ? ORDER BY d.is_root DESC, d.id LIMIT 100',
+      'WHERE t.transliteration LIKE ? ORDER BY d.is_root DESC, LENGTH(d.word), d.id LIMIT 100',
       ['%$query%'],
     );
     return results.map(DictionaryEntry.fromMap).toList();

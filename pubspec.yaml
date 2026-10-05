@@ -1,7 +1,7 @@
 name: lanelexicon
 description: "Lane's Lexicon Arabic-English Dictionary"
 publish_to: 'none'
-version: 3.0.0+30000
+version: 3.0.1+30001
 
 environment:
   sdk: ^3.10.4

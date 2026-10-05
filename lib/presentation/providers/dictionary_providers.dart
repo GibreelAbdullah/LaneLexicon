@@ -66,14 +66,34 @@ final searchResultsProvider = FutureProvider<List<DictionaryEntry>>((ref) async 
   final repo = ref.read(repositoryProvider);
   if (mode == SearchMode.fullText) return repo.fullTextSearch(query);
   if (isLatin(query)) {
-    final mapping = {'v': 'w', 'i': 'y', '3': 'e'};
-    final normalized = query.toLowerCase().replaceAllMapped(
-      RegExp(r'[vi3]'),
-      (match) => mapping[match.group(0)]!
-    );
-    return repo.searchByTransliteration(normalized);
+    return repo.searchByTransliteration(normalizeTransliteration(query));
   }
   return repo.searchByWord(query);
+});
+
+/// Live keyword suggestions for the search dropdown.
+class SuggestionQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+  void set(String query) => state = query;
+}
+
+final suggestionQueryProvider =
+    NotifierProvider<SuggestionQueryNotifier, String>(SuggestionQueryNotifier.new);
+
+final searchSuggestionsProvider = FutureProvider<List<DictionaryEntry>>((ref) async {
+  final query = ref.watch(suggestionQueryProvider);
+  if (query.isEmpty) return [];
+  final repo = ref.read(repositoryProvider);
+  List<DictionaryEntry> results;
+  if (isLatin(query)) {
+    results = await repo.searchByTransliteration(normalizeTransliteration(query));
+  } else {
+    results = await repo.searchByWord(query);
+  }
+  // Deduplicate by word — show only one entry per unique word
+  final seen = <String>{};
+  return results.where((e) => seen.add(e.word)).toList();
 });
 
 final allEntriesProvider = FutureProvider<List<DictionaryEntry>>((ref) {

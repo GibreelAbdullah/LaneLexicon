@@ -47,7 +47,10 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(searchQueryProvider);
-    final isSearching = query.isNotEmpty;
+    final mode = ref.watch(searchModeProvider);
+    // Keyword results appear in the search-bar suggestion dropdown; only
+    // full-text search populates the main body list.
+    final isSearching = query.isNotEmpty && mode == SearchMode.fullText;
     final isBottom = ref.watch(searchBarBottomProvider).value ?? false;
 
     final searchBar = const DictionarySearchBar();

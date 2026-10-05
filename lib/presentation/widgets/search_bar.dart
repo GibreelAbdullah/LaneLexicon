@@ -1,8 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../data/transliteration.dart';
+import '../../domain/dictionary_entry.dart';
 import '../providers/dictionary_providers.dart';
 import '../providers/search_history_provider.dart';
+
+/// Builds the route URI for a root entry, accounting for its occurrence index.
+String _entryUri(String word, int occ) {
+  return occ > 1 ? '/entry/$word/$occ' : '/entry/$word';
+}
 
 class DictionarySearchBar extends ConsumerStatefulWidget {
   const DictionarySearchBar({super.key});
@@ -15,12 +23,15 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
     with WidgetsBindingObserver {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+  final _layerLink = LayerLink();
   Timer? _debounce;
-  bool _showHistory = false;
+  bool _showDropdown = false;
   TextDirection _textDirection = TextDirection.ltr;
   bool _keyboardVisible = false;
   String _lastSetQuery = '';
+  OverlayEntry? _overlayEntry;
 
+  // Typewriter hint
   static const _hints = ['كتب', 'ktb', 'علم', 'elm'];
   int _hintIndex = 0;
   String _hintDisplay = '';
@@ -39,21 +50,198 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
     final bottomInset = WidgetsBinding.instance.platformDispatcher.views.first.viewInsets.bottom;
     final wasVisible = _keyboardVisible;
     _keyboardVisible = bottomInset > 0;
-    if (wasVisible && !_keyboardVisible && _showHistory) {
+    if (wasVisible && !_keyboardVisible && _showDropdown) {
       _focusNode.unfocus();
     }
   }
 
   void _onFocusChange() {
     if (_focusNode.hasFocus) {
-      setState(() => _showHistory = true);
+      _showOverlay();
     } else {
       Future.delayed(const Duration(milliseconds: 200), () {
         if (mounted && !_focusNode.hasFocus) {
-          setState(() => _showHistory = false);
+          _hideOverlay();
         }
       });
     }
+  }
+
+  void _showOverlay() {
+    if (_showDropdown) return;
+    _showDropdown = true;
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _hideOverlay() {
+    _showDropdown = false;
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  void _updateOverlay() {
+    _overlayEntry?.markNeedsBuild();
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    final isBottom = ref.read(searchBarBottomProvider).value ?? false;
+
+    return OverlayEntry(
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final mode = ref.watch(searchModeProvider);
+          final history = ref.watch(searchHistoryProvider).value ?? [];
+          final suggestions = ref.watch(searchSuggestionsProvider).value ?? [];
+          final query = _controller.text.trim();
+
+          final bool showSuggestions = query.isNotEmpty && mode == SearchMode.keyword;
+          final List<DictionaryEntry> suggestionItems = showSuggestions ? suggestions.take(8).toList() : [];
+          final List<String> historyItems = query.isEmpty
+              ? history.take(5).toList()
+              : history.where((h) => h.contains(query)).take(5).toList();
+
+          final bool hasContent = suggestionItems.isNotEmpty || historyItems.isNotEmpty;
+          if (!hasContent) return const SizedBox.shrink();
+
+          final cs = Theme.of(context).colorScheme;
+
+          // Calculate scrim bounds to avoid covering the search bar
+          final renderBox = this.context.findRenderObject() as RenderBox?;
+          final searchBarOffset = renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;
+          final searchBarHeight = renderBox?.size.height ?? 0;
+          final searchBarWidth = renderBox?.size.width ?? 0;
+          final screenSize = MediaQuery.of(context).size;
+
+          final double scrimTop = isBottom ? 0 : searchBarOffset.dy + searchBarHeight;
+          final double scrimBottom = isBottom ? screenSize.height - searchBarOffset.dy : 0;
+
+          return Stack(
+            children: [
+              // Scrim that only covers the area outside the search bar
+              Positioned(
+                top: scrimTop,
+                left: 0,
+                right: 0,
+                bottom: scrimBottom,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    _focusNode.unfocus();
+                    _hideOverlay();
+                  },
+                  child: ColoredBox(
+                    color: Colors.black.withValues(alpha: 0.25),
+                  ),
+                ),
+              ),
+              // Floating dropdown — with equal margin on both sides
+              Positioned(
+                width: searchBarWidth - 24,
+                child: CompositedTransformFollower(
+                  link: _layerLink,
+                  showWhenUnlinked: false,
+                  offset: Offset(-36, isBottom ? -4 : 4),
+                  followerAnchor: isBottom ? Alignment.bottomLeft : Alignment.topLeft,
+                  targetAnchor: isBottom ? Alignment.topLeft : Alignment.bottomLeft,
+                  child: Material(
+                    elevation: 12,
+                    borderRadius: BorderRadius.circular(12),
+                    color: cs.surfaceContainer,
+                    surfaceTintColor: cs.primary,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 300),
+                      child: _buildDropdownList(cs, showSuggestions, suggestionItems, historyItems, ref),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  /// Navigates to [entry]. Roots go directly; derivatives go to their parent
+  /// root with the derivative highlighted. Uses occurrence-aware routing.
+  Future<void> _navigateToEntry(WidgetRef ref, DictionaryEntry entry) async {
+    final repo = ref.read(repositoryProvider);
+    if (entry.isRoot) {
+      final occ = await repo.getRootOccurrence(entry.id, entry.word);
+      if (mounted) context.push(_entryUri(entry.word, occ));
+    } else {
+      final parent = await repo.getEntry(entry.parentId);
+      if (parent != null && mounted) {
+        final occ = await repo.getRootOccurrence(parent.id, parent.word);
+        if (mounted) context.push('${_entryUri(parent.word, occ)}?highlight=${entry.id}');
+      }
+    }
+  }
+
+  Widget _buildDropdownList(
+    ColorScheme cs,
+    bool showSuggestions,
+    List<DictionaryEntry> suggestionItems,
+    List<String> historyItems,
+    WidgetRef ref,
+  ) {
+    if (showSuggestions) {
+      return ListView.separated(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        itemCount: suggestionItems.length,
+        separatorBuilder: (_, _) => const Divider(height: 1, indent: 16, endIndent: 16),
+        itemBuilder: (_, i) {
+          final entry = suggestionItems[i];
+          return ListTile(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            contentPadding: EdgeInsets.only(
+              left: entry.isRoot ? 16 : 40,
+              right: 16,
+            ),
+            title: Text(
+              entry.word,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: entry.isRoot ? 18 : 16,
+                fontWeight: entry.isRoot ? FontWeight.bold : FontWeight.normal,
+                color: entry.isRoot ? cs.onSurface : cs.onSurfaceVariant,
+              ),
+            ),
+            onTap: () {
+              ref.read(searchHistoryProvider.notifier).add(entry.word);
+              _hideOverlay();
+              _focusNode.unfocus();
+              _navigateToEntry(ref, entry);
+            },
+          );
+        },
+      );
+    }
+    return ListView.separated(
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      itemCount: historyItems.length,
+      separatorBuilder: (_, _) => const Divider(height: 1, indent: 16, endIndent: 16),
+      itemBuilder: (_, i) {
+        final item = historyItems[i];
+        return ListTile(
+          dense: true,
+          visualDensity: VisualDensity.compact,
+          trailing: Icon(Icons.history, size: 18, color: cs.onSurfaceVariant),
+          title: Text(item, textDirection: _detectDirection(item)),
+          leading: IconButton(
+            icon: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
+            onPressed: () {
+              ref.read(searchHistoryProvider.notifier).remove(item);
+            },
+          ),
+          onTap: () => _selectHistory(item),
+        );
+      },
+    );
   }
 
   void _typeNext() {
@@ -91,6 +279,7 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
 
   @override
   void dispose() {
+    _hideOverlay();
     _hintTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _debounce?.cancel();
@@ -101,26 +290,25 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
   }
 
   TextDirection _detectDirection(String text) {
-    if (text.isEmpty) return TextDirection.ltr;
-    final firstChar = text.codeUnitAt(0);
-    if (firstChar >= 0x0600 && firstChar <= 0x06FF ||
-        firstChar >= 0x0750 && firstChar <= 0x077F ||
-        firstChar >= 0xFB50 && firstChar <= 0xFDFF ||
-        firstChar >= 0xFE70 && firstChar <= 0xFEFF) {
-      return TextDirection.rtl;
-    }
-    return TextDirection.ltr;
+    return isArabic(text) ? TextDirection.rtl : TextDirection.ltr;
   }
 
   void _onChanged(String value) {
     setState(() {
       _textDirection = _detectDirection(value);
-      _showHistory = _focusNode.hasFocus;
     });
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 350), () {
-      _lastSetQuery = value.trim();
-      ref.read(searchQueryProvider.notifier).set(value.trim());
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final trimmed = value.trim();
+      final mode = ref.read(searchModeProvider);
+      // Update suggestion provider for keyword mode dropdown
+      ref.read(suggestionQueryProvider.notifier).set(trimmed);
+      // For full-text mode, also update the main search query
+      if (mode == SearchMode.fullText) {
+        _lastSetQuery = trimmed;
+        ref.read(searchQueryProvider.notifier).set(trimmed);
+      }
+      _updateOverlay();
     });
   }
 
@@ -132,32 +320,37 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
       ref.read(searchQueryProvider.notifier).set(trimmed);
     }
     _focusNode.unfocus();
-    setState(() => _showHistory = false);
+    _hideOverlay();
   }
 
   void _selectHistory(String query) {
-    _controller.text = query;
-    _controller.selection = TextSelection.collapsed(offset: query.length);
-    _textDirection = _detectDirection(query);
-    _lastSetQuery = query;
-    ref.read(searchQueryProvider.notifier).set(query);
-    setState(() => _showHistory = false);
+    _hideOverlay();
     _focusNode.unfocus();
+    // Look up the word — it might be a derivative, not a root
+    ref.read(repositoryProvider).searchByWord(query).then((results) {
+      final exact = results.where((e) => e.word == query).toList();
+      if (exact.isEmpty) {
+        // Fallback: navigate as root (may show "not found" for truly missing words)
+        if (mounted) context.push('/entry/$query');
+        return;
+      }
+      _navigateToEntry(ref, exact.first);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final mode = ref.watch(searchModeProvider);
     final cs = Theme.of(context).colorScheme;
-    final history = ref.watch(searchHistoryProvider).value ?? [];
-    final isBottom = ref.watch(searchBarBottomProvider).value ?? false;
 
+    // Sync controller when query is cleared externally (e.g. home button)
     final providerQuery = ref.watch(searchQueryProvider);
     if (providerQuery.isEmpty && _lastSetQuery.isNotEmpty) {
       _lastSetQuery = '';
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _controller.text.isNotEmpty) {
           _controller.clear();
+          ref.read(suggestionQueryProvider.notifier).set('');
           setState(() => _textDirection = TextDirection.ltr);
         }
       });
@@ -165,36 +358,38 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
 
     final searchField = Padding(
       padding: const EdgeInsets.only(left: 36, right: 36),
-      child: TextField(
-        controller: _controller,
-        focusNode: _focusNode,
-        onChanged: _onChanged,
-        onSubmitted: _onSubmitted,
-        textInputAction: TextInputAction.search,
-        textDirection: _textDirection,
-        textAlign: _textDirection == TextDirection.rtl ? TextAlign.right : TextAlign.left,
-        decoration: InputDecoration(
-          hintText: mode == SearchMode.keyword ? 'Search $_hintDisplay' : 'Full text search...',
-          hintTextDirection: TextDirection.ltr,
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: _controller.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _controller.clear();
-                    _lastSetQuery = '';
-                    ref.read(searchQueryProvider.notifier).set('');
-                    setState(() {
-                      _textDirection = TextDirection.ltr;
-                      _showHistory = _focusNode.hasFocus;
-                    });
-                  },
-                )
-              : null,
-          filled: true,
-          fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(28), borderSide: BorderSide.none),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: TextField(
+          controller: _controller,
+          focusNode: _focusNode,
+          onChanged: _onChanged,
+          onSubmitted: _onSubmitted,
+          textInputAction: TextInputAction.search,
+          textDirection: _textDirection,
+          textAlign: _textDirection == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+          decoration: InputDecoration(
+            hintText: mode == SearchMode.keyword ? 'Search $_hintDisplay' : 'Full text search...',
+            hintTextDirection: TextDirection.ltr,
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: _controller.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _controller.clear();
+                      _lastSetQuery = '';
+                      ref.read(searchQueryProvider.notifier).set('');
+                      ref.read(suggestionQueryProvider.notifier).set('');
+                      setState(() => _textDirection = TextDirection.ltr);
+                      _updateOverlay();
+                    },
+                  )
+                : null,
+            filled: true,
+            fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(28), borderSide: BorderSide.none),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
         ),
       ),
     );
@@ -207,6 +402,18 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
       selected: {mode},
       onSelectionChanged: (s) {
         ref.read(searchModeProvider.notifier).set(s.first);
+        // When switching to full text, trigger search immediately if there's text
+        final trimmed = _controller.text.trim();
+        if (s.first == SearchMode.fullText && trimmed.isNotEmpty) {
+          _lastSetQuery = trimmed;
+          ref.read(searchQueryProvider.notifier).set(trimmed);
+        } else if (s.first == SearchMode.keyword) {
+          // Clear main search results, suggestions handle it
+          _lastSetQuery = '';
+          ref.read(searchQueryProvider.notifier).set('');
+          ref.read(suggestionQueryProvider.notifier).set(trimmed);
+        }
+        _updateOverlay();
       },
       style: ButtonStyle(
         visualDensity: VisualDensity.compact,
@@ -214,51 +421,16 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
       ),
     );
 
-    final query = _controller.text.trim();
-    final filteredHistory = query.isEmpty
-        ? history.take(5).toList()
-        : history.where((h) => h.contains(query)).toList();
-
-    final historyWidget = (_showHistory && filteredHistory.isNotEmpty)
-        ? _buildHistory(cs, filteredHistory)
-        : const SizedBox.shrink();
-
+    final isBottom = ref.watch(searchBarBottomProvider).value ?? false;
     final children = isBottom
-        ? [historyWidget, const SizedBox(height: 6), segmented, const SizedBox(height: 6), searchField]
-        : [searchField, const SizedBox(height: 6), segmented, historyWidget];
+        ? [segmented, const SizedBox(height: 6), searchField]
+        : [searchField, const SizedBox(height: 6), segmented];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: children,
-      ),
-    );
-  }
-
-  Widget _buildHistory(ColorScheme cs, List<String> items) {
-    return Container(
-      margin: const EdgeInsets.only(top: 6),
-      constraints: const BoxConstraints(maxHeight: 200),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        itemCount: items.length,
-        itemBuilder: (_, i) => ListTile(
-          dense: true,
-          visualDensity: VisualDensity.compact,
-          leading: Icon(Icons.history, size: 18, color: cs.onSurfaceVariant),
-          title: Text(items[i], textDirection: _detectDirection(items[i])),
-          trailing: IconButton(
-            icon: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
-            onPressed: () => ref.read(searchHistoryProvider.notifier).remove(items[i]),
-          ),
-          onTap: () => _selectHistory(items[i]),
-        ),
       ),
     );
   }
