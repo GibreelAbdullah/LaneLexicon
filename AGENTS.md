@@ -89,8 +89,16 @@ scripts/                        # one-off Python data-prep scripts
   (UI/state). Keep SQL inside `dictionary_repository.dart`.
 - **Home screen:** `screens/home_screen.dart` is a single screen that renders the
   dashboard, drawer, and sub-views via a `HomeView` enum
-  (`dashboard`, `favorites`, `quranicWords`, `browse`, `history`). The dashboard
-  tiles use `context.push(...)`.
+  (`dashboard`, `favorites`, `quranicWords`, `browse`, `history`, `search`). The
+  dashboard tiles use `context.push(...)`.
+- **Navigation MUST use `context.go(...)` for entry/search routes — not
+  `context.push(...)`.** With `go_router`, `push` navigates the widget stack but
+  does **not** update the browser-visible URL, which makes entries unshareable.
+  Always use `go` so the address bar reflects `/entry/<word>` (and `/search?q=`).
+  When navigating after an `await`, capture the router first
+  (`final router = GoRouter.of(context);`) and call `router.go(...)` afterwards,
+  rather than relying on an awaited `BuildContext`. See `test/widget_test.dart`,
+  which pins this invariant.
 - **Providers:** search state in `dictionary_providers.dart`
   (`searchQueryProvider`, `searchModeProvider`, `suggestionQueryProvider`,
   `searchSuggestionsProvider`, etc.).
@@ -99,8 +107,17 @@ scripts/                        # one-off Python data-prep scripts
   `repository.getRootOccurrence(...)`. Derivatives navigate to their parent root
   with `?highlight=<id>`.
 - **Search methodology:** keyword mode shows a live floating **suggestion dropdown**
-  (overlay) in `widgets/search_bar.dart`; full-text mode renders results in the
-  body list. (This mirrors Hans Wehr; it was ported from there.)
+  (overlay) in `widgets/search_bar.dart` (no URL — selecting an item navigates to
+  the entry). Full-text search is a **shareable route**: `/search?q=<query>`,
+  rendered via `HomeScreen(view: HomeView.search, searchQuery: q)`. The search bar
+  drives this URL live via `context.go('/search?q=...')`; `HomeScreen` seeds
+  `searchQueryProvider` + full-text mode from the `?q=` parameter so a shared link
+  reproduces the results. (This mirrors Hans Wehr; it was ported from there.)
+- **Web URLs:** clean (path) URLs via `usePathUrlStrategy()` in `main.dart`
+  (guarded by `kIsWeb`). Served from a custom-domain root, so `--base-href "/"`.
+  The release workflow copies `index.html` → `404.html` so GitHub Pages serves the
+  SPA for deep-link refreshes. `flutter_web_plugins` is declared as an SDK
+  dependency for the URL strategy import.
 - **Definitions:** root entries are mostly just the headword; the substantive text
   lives in the **derived (non-root) entries**. `widgets/definition_text.dart`
   parses simple tags (`<i>`, `<h>`, `<center>`). In `entry_card.dart`, full

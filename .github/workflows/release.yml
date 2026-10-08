@@ -85,6 +85,8 @@ jobs:
           channel: stable
       - run: flutter pub get
       - run: flutter build web --release --base-href "/" --dart-define=APP_VERSION=${GITHUB_REF_NAME#v}
+      - name: SPA fallback for GitHub Pages deep links
+        run: cp build/web/index.html build/web/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web

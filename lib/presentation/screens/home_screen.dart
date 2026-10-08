@@ -20,9 +20,9 @@ String _entryUri(String word, int occ) {
 
 Future<void> _pushRootEntry(BuildContext context, WidgetRef ref, DictionaryEntry entry) async {
   final repo = ref.read(repositoryProvider);
+  final router = GoRouter.of(context);
   final occ = await repo.getRootOccurrence(entry.id, entry.word);
-  final uri = _entryUri(entry.word, occ);
-  if (context.mounted) context.push(uri);
+  router.go(_entryUri(entry.word, occ));
 }
 
 Future<void> _pushEntry(BuildContext context, WidgetRef ref, DictionaryEntry entry) async {
@@ -30,32 +30,60 @@ Future<void> _pushEntry(BuildContext context, WidgetRef ref, DictionaryEntry ent
     return _pushRootEntry(context, ref, entry);
   }
   final repo = ref.read(repositoryProvider);
+  final router = GoRouter.of(context);
   final parent = await repo.getEntry(entry.parentId);
-  if (parent != null && context.mounted) {
+  if (parent != null) {
     final occ = await repo.getRootOccurrence(parent.id, parent.word);
-    final uri = '${_entryUri(parent.word, occ)}?highlight=${entry.id}';
-    if (context.mounted) context.push(uri);
+    router.go('${_entryUri(parent.word, occ)}?highlight=${entry.id}');
   }
 }
 
-enum HomeView { dashboard, favorites, quranicWords, browse, history }
+enum HomeView { dashboard, favorites, quranicWords, browse, history, search }
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   final HomeView view;
-  const HomeScreen({super.key, required this.view});
+  final String searchQuery;
+  const HomeScreen({super.key, required this.view, this.searchQuery = ''});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final query = ref.watch(searchQueryProvider);
-    final mode = ref.watch(searchModeProvider);
-    // Keyword results appear in the search-bar suggestion dropdown; only
-    // full-text search populates the main body list.
-    final isSearching = query.isNotEmpty && mode == SearchMode.fullText;
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _syncFromUrl();
+  }
+
+  @override
+  void didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery || oldWidget.view != widget.view) {
+      _syncFromUrl();
+    }
+  }
+
+  void _syncFromUrl() {
+    if (widget.view != HomeView.search) return;
+    final q = widget.searchQuery.trim();
+    // Drive the shared search state from the URL so a shared /search?q= link
+    // reproduces the same results.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(searchModeProvider.notifier).set(SearchMode.fullText);
+      ref.read(searchQueryProvider.notifier).set(q);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isSearching = widget.view == HomeView.search;
     final isBottom = ref.watch(searchBarBottomProvider).value ?? false;
 
     final searchBar = const DictionarySearchBar();
     final content = Expanded(
-      child: isSearching ? const _SearchResults() : _buildView(view),
+      child: isSearching ? const _SearchResults() : _buildView(widget.view),
     );
 
     return Scaffold(
@@ -210,6 +238,8 @@ class HomeScreen extends ConsumerWidget {
         return const _BrowseAll();
       case HomeView.history:
         return const _HistoryList();
+      case HomeView.search:
+        return const _SearchResults();
     }
   }
 }

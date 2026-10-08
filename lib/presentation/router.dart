@@ -19,6 +19,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const HomeScreen(view: HomeView.dashboard),
       ),
       GoRoute(
+        path: '/search',
+        builder: (context, state) => HomeScreen(
+          view: HomeView.search,
+          searchQuery: state.uri.queryParameters['q'] ?? '',
+        ),
+      ),
+      GoRoute(
         path: '/favorites',
         builder: (context, state) => const HomeScreen(view: HomeView.favorites),
       ),
