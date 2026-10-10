@@ -6,11 +6,7 @@ import '../../data/transliteration.dart';
 import '../../domain/dictionary_entry.dart';
 import '../providers/dictionary_providers.dart';
 import '../providers/search_history_provider.dart';
-
-/// Builds the route URI for a root entry, accounting for its occurrence index.
-String _entryUri(String word, int occ) {
-  return occ > 1 ? '/entry/$word/$occ' : '/entry/$word';
-}
+import '../screens/entry_navigation.dart';
 
 class DictionarySearchBar extends ConsumerStatefulWidget {
   const DictionarySearchBar({super.key});
@@ -164,20 +160,10 @@ class _DictionarySearchBarState extends ConsumerState<DictionarySearchBar>
   }
 
   /// Navigates to [entry]. Roots go directly; derivatives go to their parent
-  /// root with the derivative highlighted. Uses occurrence-aware routing.
+  /// root with the derivative highlighted. Occurrence handling (if any) lives
+  /// in the per-app `entry_navigation.dart`.
   Future<void> _navigateToEntry(WidgetRef ref, DictionaryEntry entry) async {
-    final repo = ref.read(repositoryProvider);
-    final router = GoRouter.of(context);
-    if (entry.isRoot) {
-      final occ = await repo.getRootOccurrence(entry.id, entry.word);
-      router.go(_entryUri(entry.word, occ));
-    } else {
-      final parent = await repo.getEntry(entry.parentId);
-      if (parent != null) {
-        final occ = await repo.getRootOccurrence(parent.id, parent.word);
-        router.go('${_entryUri(parent.word, occ)}?highlight=${entry.id}');
-      }
-    }
+    await pushEntry(context, ref, entry);
   }
 
   Widget _buildDropdownList(

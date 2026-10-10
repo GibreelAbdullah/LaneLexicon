@@ -13,10 +13,11 @@ class DbUpdateInfo {
   const DbUpdateInfo({required this.remoteVersion, required this.downloadUrl});
 }
 
+/// Returns update info if a newer DB is available, null otherwise.
 Future<DbUpdateInfo?> checkForDbUpdate() async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    final localVersion = prefs.getInt('db_version') ?? 0;
+    final localVersion = prefs.getInt('db_version') ?? DatabaseHelper.dbVersion;
     final response = await http.get(Uri.parse(_manifestUrl));
     if (response.statusCode != 200) return null;
     final manifest = jsonDecode(response.body) as Map<String, dynamic>;
@@ -31,6 +32,7 @@ Future<DbUpdateInfo?> checkForDbUpdate() async {
   }
 }
 
+/// Downloads the new DB and replaces the local cache.
 Future<void> applyDbUpdate(DbUpdateInfo info) async {
   await platform.downloadAndReplaceDb(info.downloadUrl, info.remoteVersion);
   DatabaseHelper.invalidate();

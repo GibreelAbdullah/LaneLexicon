@@ -5,6 +5,7 @@ import 'migration_native.dart' if (dart.library.html) 'migration_stub.dart'
 
 const _migrationDoneKey = 'migration_from_old_done';
 
+/// Migrates favorites and history from the old app version.
 Future<void> migrateFromOldApp() async {
   if (kIsWeb) return;
   final prefs = await SharedPreferences.getInstance();

@@ -64,7 +64,9 @@ finishing. Clean up temp files created during verification.
 
 ```
 lib/
-  main.dart                     # app entry; web shows DbLoadingScreen
+  main.dart                     # app entry; web gates DB loading inside the
+                                #   MaterialApp.router builder (keeps the router
+                                #   + deep-link URL mounted while the DB loads)
   data/                         # repositories, DB helpers, migrations, static data
     dictionary_repository.dart  # all SQL queries
     database_helper*.dart       # native vs web DB init (conditional imports)
@@ -74,7 +76,6 @@ lib/
   domain/                       # plain models (DictionaryEntry, QuranReference)
   presentation/
     router.dart                 # go_router config
-    db_loading_screen.dart      # web DB download/progress UI
     screens/                    # screens (home_screen.dart is the dashboard+drawer)
     providers/                  # Riverpod providers
     widgets/                    # reusable widgets (search_bar, entry_card, ...)
@@ -118,6 +119,14 @@ scripts/                        # one-off Python data-prep scripts
   The release workflow copies `index.html` → `404.html` so GitHub Pages serves the
   SPA for deep-link refreshes. `flutter_web_plugins` is declared as an SDK
   dependency for the URL strategy import.
+- **Web DB loading MUST stay inside the router.** `main.dart` keeps a single
+  `MaterialApp.router` mounted from the first frame and gates the web DB-load
+  state inside its `builder:` via `dbReadyProvider` (`.when(data/loading/error)`).
+  Do **not** swap in a separate `MaterialApp` splash before the router mounts — a
+  second root `MaterialApp` resets the browser location to `/`, so deep links like
+  `/entry/<word>` load the app and then "redirect" to the dashboard. The
+  `test/widget_test.dart` `go` invariant plus a shareable deep link are the guard
+  rails here. (This mirrors Hans Wehr's `main.dart`.)
 - **Definitions:** root entries are mostly just the headword; the substantive text
   lives in the **derived (non-root) entries**. `widgets/definition_text.dart`
   parses simple tags (`<i>`, `<h>`, `<center>`). In `entry_card.dart`, full

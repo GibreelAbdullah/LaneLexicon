@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../providers/dictionary_providers.dart';
-import '../widgets/constrained_body.dart';
 
 class _VerbForm {
   final String form;
@@ -33,39 +29,14 @@ const _verbForms = [
   _VerbForm(form: 'X', pattern: 'اِسْتَفْعَلَ', meaning: 'Seeking or requesting the Form I action.', exampleAr: 'اِسْتَغْفَرَ', exampleEn: 'he sought forgiveness'),
 ];
 
-class VerbFormsScreen extends ConsumerWidget {
-  const VerbFormsScreen({super.key});
+class VerbFormsBody extends StatelessWidget {
+  const VerbFormsBody({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isBottom = ref.watch(searchBarBottomProvider).value ?? false;
+  Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    final toolbar = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              if (GoRouter.of(context).canPop()) {
-                context.pop();
-              } else {
-                context.go('/');
-              }
-            },
-          ),
-          const Expanded(
-            child: Text('Verb Forms',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center),
-          ),
-          const SizedBox(width: 48),
-        ],
-      ),
-    );
-
-    final body = ListView.separated(
+    return ListView.separated(
       padding: const EdgeInsets.all(12),
       itemCount: _verbForms.length,
       separatorBuilder: (_, _) => const SizedBox(height: 10),
@@ -85,7 +56,9 @@ class VerbFormsScreen extends ConsumerWidget {
                       child: Text(v.form, style: TextStyle(fontWeight: FontWeight.bold, color: cs.onPrimaryContainer)),
                     ),
                     const SizedBox(width: 12),
-                    Text(v.pattern, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: cs.onSurface), textDirection: TextDirection.rtl),
+                    Text(v.pattern,
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: cs.onSurface),
+                        textDirection: TextDirection.rtl),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -99,7 +72,9 @@ class VerbFormsScreen extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      Text(v.exampleAr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: cs.onSurface), textDirection: TextDirection.rtl),
+                      Text(v.exampleAr,
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: cs.onSurface),
+                          textDirection: TextDirection.rtl),
                       const SizedBox(width: 12),
                       Text('— ${v.exampleEn}', style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
                     ],
@@ -110,18 +85,6 @@ class VerbFormsScreen extends ConsumerWidget {
           ),
         );
       },
-    );
-
-    return Scaffold(
-      body: SafeArea(
-        child: ConstrainedBody(
-          child: Column(
-            children: isBottom
-                ? [Expanded(child: body), const Divider(height: 1), toolbar]
-                : [toolbar, const Divider(height: 1), Expanded(child: body)],
-          ),
-        ),
-      ),
     );
   }
 }

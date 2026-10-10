@@ -1,43 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../providers/dictionary_providers.dart';
-import '../widgets/constrained_body.dart';
 
-class AboutScreen extends ConsumerWidget {
-  const AboutScreen({super.key});
+class AboutBody extends StatelessWidget {
+  const AboutBody({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isBottom = ref.watch(searchBarBottomProvider).value ?? false;
+  Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    final toolbar = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              if (GoRouter.of(context).canPop()) {
-                context.pop();
-              } else {
-                context.go('/');
-              }
-            },
-          ),
-          const Expanded(
-            child: Text('About',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center),
-          ),
-          const SizedBox(width: 48),
-        ],
-      ),
-    );
-
-    final body = SingleChildScrollView(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -146,18 +117,6 @@ class AboutScreen extends ConsumerWidget {
             ),
           ),
         ],
-      ),
-    );
-
-    return Scaffold(
-      body: SafeArea(
-        child: ConstrainedBody(
-          child: Column(
-            children: isBottom
-                ? [Expanded(child: body), const Divider(height: 1), toolbar]
-                : [toolbar, const Divider(height: 1), Expanded(child: body)],
-          ),
-        ),
       ),
     );
   }

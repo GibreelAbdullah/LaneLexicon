@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Theme mode
+class ThemeModeNotifier extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() => ThemeMode.system;
+  void set(ThemeMode mode) => state = mode;
+}
+
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
+
+/// Preset theme options with a seed color.
 enum ThemePreset {
   blue(Color(0xFF1565C0), 'Blue'),
   teal(Color(0xFF00897B), 'Teal'),
@@ -17,6 +27,7 @@ enum ThemePreset {
   const ThemePreset(this.color, this.label);
 }
 
+/// Custom color overrides. Null means use the default from the preset.
 class CustomColors {
   final Color? background;
   final Color? surface;
@@ -113,6 +124,7 @@ class ThemeSettingsNotifier extends AsyncNotifier<ThemeSettings> {
   Future<void> setText(Color? c) => setCustomColor(_textKey, c);
   Future<void> setPrimary(Color? c) => setCustomColor(_primaryKey, c);
   Future<void> setAccent(Color? c) => setCustomColor(_accentKey, c);
+
   Future<void> setDerivativeCard(Color? c) => setCustomColor(_derivativeCardKey, c);
 
   Future<void> resetCustomColors() async {
@@ -136,6 +148,7 @@ class ThemeSettingsNotifier extends AsyncNotifier<ThemeSettings> {
 final themeSettingsProvider =
     AsyncNotifierProvider<ThemeSettingsNotifier, ThemeSettings>(ThemeSettingsNotifier.new);
 
+// Font choices
 enum AppFont {
   system('System Default'),
   notoSansArabic('Noto Sans Arabic'),
@@ -168,6 +181,7 @@ class AppFontNotifier extends AsyncNotifier<AppFont> {
 final appFontProvider =
     AsyncNotifierProvider<AppFontNotifier, AppFont>(AppFontNotifier.new);
 
+// Font scale
 class FontScaleNotifier extends AsyncNotifier<double> {
   static const _key = 'font_scale';
 

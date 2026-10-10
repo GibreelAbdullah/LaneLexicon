@@ -59,6 +59,7 @@ class AppTheme {
     );
   }
 
+  // Fallback defaults used before settings load
   static final light = buildLight(const ThemeSettings());
   static final dark = buildDark(const ThemeSettings());
 }
